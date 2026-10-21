@@ -118,3 +118,9 @@ Updated at the end of every session. Only record what a build actually did.
   Trap Team's and SuperChargers' characters) were under none. Its table now has them, read from
   the games' own files (here: the toy data's +0x0C); the crystals by toy id. Checked by script:
   the SuperChargers tab shows Splat, Soda Skimmer, Splatter Splasher under Magic.
+- **The HUD at the window's edges with ultrawide** (`ultrawide_hud`, on; F4 > Grafik > "HUD bei
+  Ultrawide"): the owner found the stretched HUD squashed. The UI (Juice) lays itself out on its
+  contexts' expected screen width, as in Swap Force (whose hook was found first); the hook sets it
+  to the window's width at the UI's height where the sizes are read for drawing, so the HUD and the
+  menus keep their proportions at the window's edges. Checked by script in a 2560x1080 window:
+  the pause menu (its progress screen), nothing left uncovered.
