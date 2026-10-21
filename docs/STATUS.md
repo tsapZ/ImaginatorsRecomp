@@ -97,3 +97,10 @@ Updated at the end of every session. Only record what a build actually did.
   level, and the game keeps its speed: the magic moment's states around a figure's arrival last as
   long as at 30 FPS (the figure's intro 5.36 against 5.42 s). The magic moment watch logs its state
   changes at info level now (a few lines per figure change), which is how the speed was timed.
+- **The menus in the game's own fonts** (src/game/game_fonts.cpp from SuperChargersRecomp,
+  skylanders-portal b804d9c, SwapForceRecomp #54): fonts/ProximaNova-Title.igz (permanent.pak, 93
+  glyphs, the rounded title letters of the game's own prompts; a 1024x1024 page with a second mip
+  level) and fonts/ProximaNova-Body.igz (essentialui.pak, 172 glyphs with ä ö ü ß). The portal
+  library draws the menus' titles and text with them, Segoe UI filling in missing glyphs. Checked
+  by script: the portal menu's title in the same letters as the game's "BITTE PLATZIERE DEINEN"
+  behind it; names, tabs and hints in ProximaNova.
