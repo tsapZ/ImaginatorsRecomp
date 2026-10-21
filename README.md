@@ -14,7 +14,7 @@ See [docs/STATUS.md](docs/STATUS.md) and [docs/roadmap.md](docs/roadmap.md).
 | Build | ✅ codegen and build |
 | Boot | ✅ title, licence agreement (accept with Y), save slots, difficulty, opening cutscene |
 | First level | ✅ with a figure on the emulated portal (by script) |
-| Portal menu | ✅ with Guide, with the game's collection icons |
+| Portal menu | ✅ opens by itself at the game's prompt, with the game's collection icons |
 | Portal | ⬜ (the portal code is in, not tried with this game) |
 
 ## Building

@@ -12,7 +12,7 @@ Updated at the end of every session. Only record what a build actually did.
 | Codegen | works with 30 `config/default.toml` entries: function starts the analyzer put one instruction late |
 | Boot | ✅ the Activision and Toys for Bob logos, the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
-| Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; it doesn't open by itself yet |
+| Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens |
 | Languages | this disc has **Spanish and Italian only**; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
 
 ## 2026-10-21: session log
@@ -31,3 +31,10 @@ Updated at the end of every session. Only record what a build actually did.
   permanent.pak with ToyData/<Name>_ToyData.igz (IGZ version 9) and ToyCollectionMaterials.pak with
   the collection icons. 281 toys, 308 variants, 565 icons in 435 ms. Checked by script in the first
   level: the pages of every game show their pictures, the Imaginators page its creation crystals.
+- **The portal menu opens by itself** (src/game/magic_moment_watch.cpp, SuperChargers' watch with
+  this game's values): Ghidra project imported this morning; CMagicMoment's field names and u16
+  offsets from the executable (state +0x40, reason +0x158, error type +0x1CC, player +0x1D0), the
+  states numbered as in Swap Force (Idle 5, Error 16), the instance pointer 0x837F649C from
+  snapshots of .data and the physical heap at "Coloca tu Skylander" and in play. Checked by script:
+  the menu came up by itself at the prompt, A and A put Double Trouble on, and he played in the
+  first level with his HUD portrait.
