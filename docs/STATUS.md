@@ -12,7 +12,7 @@ Updated at the end of every session. Only record what a build actually did.
 | Codegen | works with 30 `config/default.toml` entries (function starts the analyzer put one instruction late) and one hook (the movie skip) |
 | Boot | ✅ the Activision and Toys for Bob logos (skipped by default, `skip_intro`), the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages in Spanish, 52 in German, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips; `skip_opening_movie` skips it, off by default) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
-| Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens |
+| Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens; a sensei's card shows its battle class (the game's medallion and name), a vehicle's its terrain; the details view shows the hat (name and stats; the disc has only three hat pictures) and every Skylander's upgrade tree with the game's pictures and prices |
 | Languages | this disc has **Spanish and Italian only**; German text (menus, texts, subtitles, the title screen, the licence) from the owner's PS3 disc with tools/german_text.py, German voices experimental (`--voices`); German and English are on the owner's PS3 disc: docs/game/imaginators.md |
 
 ## 2026-10-21: session log
@@ -130,3 +130,11 @@ Updated at the end of every session. Only record what a build actually did.
   Start: BinkOpen's header hook; end: a hook at the start of BinkClose (sub_832A04B8, called only
   from the game's movie close). Checked by script in a 2560x1080 window with skip_intro off: the
   logos 16:9 in the middle, the screen after them fills the window again.
+
+## 2026-10-22: session log (night)
+
+- **Senseis' battle classes and vehicles' terrain** (589914b): the game's class table LooseData/CYOSClassDataList.igz in JuiceDomain_FrontEnd.pak (ten classes, 30 senseis; Kaos has a class of his own without a symbol), the medallions cut out of the sensei shrine pictures in CRM.pak, the German class names from the game's text (Ritter, Bogenkämpfer, Zauberer, ...); the terrain at CVehicleToyData +0x34 with the blueprint screen's colour symbols from E3PressStart.pak. Checked: Buckshot "Bogenkämpfer", Mysticat a sorcerer, Pain-Yatta a smasher, Soda Skimmer the sea symbol.
+- **Hats in the details view** (src/game/hats.cpp, the same code as SuperChargers' with this disc's offsets: number at +0x9C, attributes +0x98, icon +0x10): 266 hats, 32 attribute names; only three hats have a picture on this disc (the game shows hats as 3D models), the others get a plain hat symbol.
+- **Upgrades in the details view** (src/game/toy_upgrades.cpp, shared with SuperChargers; this disc's character data has the same layout, King Pen and Spyro checked). Checked on a copy of a Chop Chop: the whole tree with the pictures, German texts and prices. A sensei's Sky-Chi is shown as the Soul Gem path's second upgrade.
+- **Portal library** (cbc71c6, 0eb2564): German card subtitles in the singular ("Sensei", "Schurken-Sensei", "Kreationskristall"); the hat symbol.
+- **New issues:** #3 bloom and motion blur options, #4 a creation crystal's class, #5 the game's controller picture (on the disc: Controller_SchemeXenon.pak).
