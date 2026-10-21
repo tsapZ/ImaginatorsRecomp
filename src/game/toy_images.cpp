@@ -31,6 +31,26 @@
 // 2x with a Lanczos-3 filter (sharper edges, on premultiplied alpha so the round edge stays clean)
 // and kept that way: 120 to 260 KB per icon on screen instead of 70 MB for all of them at start.
 // A variant without an entry of its own (most chase variants) shows its toy's default icon.
+//
+// The menu's traits (SetFigureTraitProvider), as Swap Force's SWAP skills and SuperChargers'
+// vehicle terrain (the owner asked for such symbols, 2026-10-21):
+//   - A sensei's battle class. LooseData/CYOSClassDataList.igz in JuiceDomain_FrontEnd.pak is the
+//     game's class table: one CCYOSClassData per class, +0x28 its character file
+//     ("CYOS_Class_Sword"), +0x54 its _senseiList, a CCYOSClassSenseiDataList (+0x08 count, +0x14
+//     the item pointers) of CCYOSClassSenseiData with the sensei's toy id at +0x08. Read
+//     2026-10-21: ten classes with 31 senseis (Kaos is a class of his own without a symbol; the
+//     three NPC classes have none), and the senseis' own file names agree (SwordLifeGuy, SwordArmor
+//     under Sword; ArcherGoat, ArcherRobot under Archer; TwinbladesChainsaw under Blades). The
+//     symbol is the medallion of the class's picture in the sensei shrine menu, "textures/
+//     GuiStandard_diffuse,textures@!ui!CRM!SI_CRM_<Class>Class`tga,101.igz" in CRM.pak (344x308,
+//     stored upside down like the others), and the name the game's German text for the class
+//     (CYOSClassDataList's text: Ritter, Ninja, Panzerbrecher, ...).
+//   - A vehicle's terrain: CVehicleToyData +0x34, 1 land, 2 sky, 3 sea (this game's
+//     TemplateLandVehicle / TemplateAirVehicle / TemplateSeaVehicle have 1 / 2 / 3, four bytes
+//     later than in SuperChargers; read 2026-10-21 from all 36 vehicles). The symbols are the
+//     blueprint screen's, "textures/GuiStandard_diffuse,textures@!ui!Blueprints_2015!
+//     <Land|Air|Sea>Vehicle_Icon`tga,101.igz" in E3PressStart.pak, the only archive with all three
+//     in colour (172x172; AP_MatchmakingLobby.pak's sea and air ones are two-channel masks).
 
 #include "toy_images.h"
 
@@ -39,6 +59,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -52,6 +73,7 @@
 
 #include "game/alchemy/iga_archive.h"
 #include "game/alchemy/igz_file.h"
+#include "portal_rex/menu_draw.h"
 #include "portal_rex/portal_menu.h"
 
 namespace imaginatorsrecomp {
@@ -97,6 +119,47 @@ constexpr uint32_t kDecoField = 0x08;
 constexpr uint32_t kYearField = 0x0C;
 constexpr uint32_t kFlagsField = 0x10;
 constexpr uint32_t kVariantMaterialField = 0x1C;
+constexpr uint32_t kVehicleTerrainField = 0x34;  // CVehicleToyData
+
+// The traits' symbols and tables (see the top of this file).
+constexpr char kTerrainArchive[] = "E3PressStart.pak";
+constexpr std::string_view kTerrainTexture =
+    "/textures/GuiStandard_diffuse,textures@!ui!Blueprints_2015!";
+constexpr std::string_view kTerrainSuffix = "Vehicle_Icon`tga,101.igz";
+constexpr char kClassArchive[] = "CRM.pak";
+constexpr std::string_view kClassTexture = "/textures/GuiStandard_diffuse,textures@!ui!CRM!SI_CRM_";
+constexpr std::string_view kClassSuffix = "Class`tga,101.igz";
+constexpr char kClassListArchive[] = "JuiceDomain_FrontEnd.pak";
+constexpr std::string_view kClassListFile = "/LooseData/CYOSClassDataList.igz";
+constexpr std::string_view kClassFilePrefix = "CYOS_Class_";
+constexpr uint32_t kClassFileField = 0x28;    // CCYOSClassData: its character file's name
+constexpr uint32_t kSenseiListField = 0x54;   // CCYOSClassData: its CCYOSClassSenseiDataList
+constexpr uint32_t kListCountField = 0x08;
+constexpr uint32_t kListDataField = 0x14;
+constexpr uint32_t kSenseiToyField = 0x08;    // CCYOSClassSenseiData: the sensei's toy id
+constexpr uint32_t kMaxSenseisPerClass = 64;
+
+// The classes by their character file ("CYOS_Class_<file>"), with their picture's name
+// ("SI_CRM_<picture>Class", "Scorcerer" as the disc spells it) and the game's German and English
+// names.
+struct BattleClass {
+  std::string_view file;
+  std::string_view picture;
+  const char* german;
+  const char* english;
+};
+constexpr BattleClass kClasses[] = {
+    {"Sword", "Knight", "Ritter", "Knight"},
+    {"Thrown", "Ninja", "Ninja", "Ninja"},
+    {"Bazooka", "Bazooker", "Panzerbrecher", "Bazooker"},
+    {"Pistol", "Quickshot", "Schnellsch\xC3\xBC" "tze", "Quickshot"},
+    {"Mage", "Scorcerer", "Zauberer", "Sorcerer"},
+    {"Fist", "Brawler", "Boxer", "Brawler"},
+    {"Doubler", "Sentinel", "W\xC3\xA4" "chter", "Sentinel"},
+    {"Blades", "Swashbuckler", "S\xC3\xA4" "belrassler", "Swashbuckler"},
+    {"Archer", "Bowslinger", "Bogenk\xC3\xA4" "mpfer", "Bowslinger"},
+    {"Club", "Smasher", "Schmetterer", "Smasher"},
+};
 
 constexpr uint16_t kSeries2 = 0x800;
 constexpr uint16_t kAlternateDeco = 0x400;
@@ -106,11 +169,13 @@ constexpr uint16_t kDecoIdMask = 0x1FF;
 struct Toy {
   std::string material;                                   // the default collection material
   std::unordered_map<uint16_t, std::string> variants;     // catalog variant -> material
+  uint32_t terrain = 0;                                   // vehicles: 1 land, 2 sky, 3 sea
 };
 
 std::mutex g_mutex;
 std::unordered_map<uint16_t, Toy> g_toys;                                    // by toy id
 std::unordered_map<std::string, std::shared_ptr<const FigureImage>> g_icons;  // by material
+std::unordered_map<uint16_t, size_t> g_classes;  // sensei toy id -> kClasses index
 bool g_ready = false;
 
 bool EndsWith(const std::string& s, std::string_view suffix) {
@@ -244,6 +309,7 @@ void IndexToyData(const IgaArchive& archive, ToyMap& toys) {
       if (id > 0xFFFF || material.empty()) continue;
       Toy& toy = toys[uint16_t(id)];
       toy.material = std::move(material);
+      if (type == "CVehicleToyData") toy.terrain = igz->Field(object, kVehicleTerrainField);
       for (const auto& [variant, m] : variants) toy.variants.emplace(variant, m);
     }
   }
@@ -310,16 +376,88 @@ void IndexIcons(const IgaArchive& archive, IconMap& icons, const IgaArchive* tra
   }
 }
 
+// Each sensei's class (kClasses index) by toy id, from the game's class table.
+std::unordered_map<uint16_t, size_t> IndexClasses(const IgaArchive& archive) {
+  std::unordered_map<uint16_t, size_t> classes;
+  for (size_t i = 0; i < archive.size(); ++i) {
+    if (!EndsWith(archive.name(i), kClassListFile)) continue;
+    auto data = archive.Read(i);
+    auto igz = data ? IgzFile::Parse(std::move(*data)) : std::nullopt;
+    if (!igz) break;
+    for (const auto& [object, type] : igz->Objects("CCYOSClassData")) {
+      const std::string file = igz->StringAt(igz->Field(object, kClassFileField));
+      if (!file.starts_with(kClassFilePrefix)) continue;
+      const std::string_view kind = std::string_view(file).substr(kClassFilePrefix.size());
+      const auto known = std::find_if(std::begin(kClasses), std::end(kClasses),
+                                      [&](const BattleClass& c) { return c.file == kind; });
+      const uint32_t list_pointer = igz->Field(object, kSenseiListField);
+      const auto list = list_pointer ? igz->Pointer(list_pointer) : std::nullopt;
+      if (known == std::end(kClasses) || !list) continue;
+      const uint32_t count = igz->Field(*list, kListCountField);
+      const uint32_t items_pointer = igz->Field(*list, kListDataField);
+      const auto items = items_pointer ? igz->Pointer(items_pointer) : std::nullopt;
+      if (!items || count > kMaxSenseisPerClass) continue;
+      for (uint32_t k = 0; k < count; ++k) {
+        const uint32_t sensei_pointer = igz->Field(*items, 4 * k);
+        const auto sensei = sensei_pointer ? igz->Pointer(sensei_pointer) : std::nullopt;
+        if (!sensei) continue;
+        const uint32_t id = igz->Field(*sensei, kSenseiToyField);
+        if (id <= 0xFFFF) classes[uint16_t(id)] = size_t(known - std::begin(kClasses));
+      }
+    }
+    break;
+  }
+  return classes;
+}
+
+// The medallion out of a class picture (upright, 344x308): the gold ring is 196 pixels across
+// around (172, 125) in all ten (measured 2026-10-21); the shrine's background around it is made
+// transparent so the menu shows only the round symbol.
+std::shared_ptr<FigureImage> Medallion(const FigureImage& picture) {
+  constexpr int kSize = 200, kLeft = 72, kTop = 25;
+  constexpr double kRadius = 99.5;
+  if (picture.width < kLeft + kSize || picture.height < kTop + kSize) return nullptr;
+  auto out = std::make_shared<FigureImage>();
+  out->width = kSize;
+  out->height = kSize;
+  out->rgba.resize(size_t(kSize) * kSize * 4);
+  for (int y = 0; y < kSize; ++y) {
+    for (int x = 0; x < kSize; ++x) {
+      const uint8_t* from = &picture.rgba[(size_t(kTop + y) * picture.width + kLeft + x) * 4];
+      uint8_t* to = &out->rgba[(size_t(y) * kSize + x) * 4];
+      std::copy(from, from + 4, to);
+      const double d = std::hypot(x + 0.5 - kSize / 2.0, y + 0.5 - kSize / 2.0);
+      to[3] = uint8_t(std::lround(to[3] * std::clamp(kRadius - d, 0.0, 1.0)));
+    }
+  }
+  return out;
+}
+
 // The menu's symbols in `archive`: the element badges (kElementTexture + <Element> +
-// kElementSuffix) as "element:<element>" and the coin (kCoinTexture) as "ui:gold". Returns how
-// many it read.
+// kElementSuffix) as "element:<element>", the coin (kCoinTexture) as "ui:gold", the terrain
+// symbols as "vehicle:land" / "vehicle:sky" / "vehicle:sea" and the class medallions as
+// "class:<picture>". Returns how many it read.
 int IndexArt(const IgaArchive& archive, IconMap& icons) {
   int count = 0;
   for (size_t i = 0; i < archive.size(); ++i) {
     const std::string& name = archive.name(i);
     std::string key;
+    bool medallion = false;
     if (EndsWith(name, kCoinTexture)) {
       key = "ui:gold";
+    } else if (const size_t at = name.find(kTerrainTexture);
+               at != std::string::npos && EndsWith(name, kTerrainSuffix)) {
+      const std::string kind = name.substr(at + kTerrainTexture.size(),
+                                           name.size() - at - kTerrainTexture.size() - kTerrainSuffix.size());
+      if (kind == "Land") key = "vehicle:land";
+      else if (kind == "Air") key = "vehicle:sky";
+      else if (kind == "Sea") key = "vehicle:sea";
+      else continue;
+    } else if (const size_t at = name.find(kClassTexture);
+               at != std::string::npos && EndsWith(name, kClassSuffix)) {
+      key = "class:" + name.substr(at + kClassTexture.size(),
+                                   name.size() - at - kClassTexture.size() - kClassSuffix.size());
+      medallion = true;
     } else if (const size_t at = name.find(kElementTexture);
                at != std::string::npos && EndsWith(name, kElementSuffix)) {
       std::string element = name.substr(at + kElementTexture.size(),
@@ -332,7 +470,9 @@ int IndexArt(const IgaArchive& archive, IconMap& icons) {
       continue;
     }
     if (icons.contains(key)) continue;
-    if (auto image = ReadPicture(archive, i)) {
+    std::shared_ptr<const FigureImage> image = ReadPicture(archive, i);
+    if (image && medallion) image = Medallion(*image);
+    if (image) {
       icons[key] = std::move(image);
       ++count;
     }
@@ -355,9 +495,12 @@ void Load(std::filesystem::path rom) {
   const SharpMap sharp = tracker ? IndexSharpIcons(*tracker) : SharpMap{};
   IndexIcons(*materials, icons, tracker ? &*tracker : nullptr, sharp);
   int symbols = 0;
-  for (const char* name : {kElementArchive, kCoinArchive}) {
+  for (const char* name : {kElementArchive, kCoinArchive, kTerrainArchive, kClassArchive}) {
     if (auto art = IgaArchive::Open(rom / "archives" / name)) symbols += IndexArt(*art, icons);
   }
+  std::unordered_map<uint16_t, size_t> classes;
+  if (auto list = IgaArchive::Open(rom / "archives" / kClassListArchive)) classes = IndexClasses(*list);
+  const size_t class_count = classes.size();
   size_t variants = 0;
   for (const auto& [id, toy] : toys) variants += toy.variants.size();
   const size_t toy_count = toys.size(), icon_count = icons.size();
@@ -365,10 +508,11 @@ void Load(std::filesystem::path rom) {
     std::lock_guard<std::mutex> lock(g_mutex);
     g_toys = std::move(toys);
     g_icons = std::move(icons);
+    g_classes = std::move(classes);
     g_ready = true;
   }
-  REXLOG_INFO("Toy images: {} toys with {} variants, {} icons and {} symbols, in {} ms", toy_count,
-              variants, icon_count - symbols, symbols,
+  REXLOG_INFO("Toy images: {} toys with {} variants, {} icons and {} symbols, {} senseis' classes, "
+              "in {} ms", toy_count, variants, icon_count - symbols, symbols, class_count,
               std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - start).count());
 }
 
@@ -378,6 +522,29 @@ std::shared_ptr<const FigureImage> Icon(const std::string& material) {
   if (it == g_icons.end()) return nullptr;
   if (it->second->width < kEnlargeBelow) it->second = Enlarge(*it->second, kEnlargeFactor);
   return it->second;
+}
+
+// A sensei's class or a vehicle's terrain as the menu's trait, or nothing for the other toys.
+std::optional<skylanders::FigureTrait> Trait(uint16_t id) {
+  uint32_t terrain = 0;
+  std::optional<size_t> battle_class;
+  {
+    std::lock_guard<std::mutex> lock(g_mutex);
+    if (!g_ready) return std::nullopt;
+    if (auto it = g_toys.find(id); it != g_toys.end()) terrain = it->second.terrain;
+    if (auto it = g_classes.find(id); it != g_classes.end()) battle_class = it->second;
+  }
+  const bool german = skylanders::menu_draw::GermanText();
+  if (battle_class) {
+    const BattleClass& c = kClasses[*battle_class];
+    return skylanders::FigureTrait{"class:" + std::string(c.picture), german ? c.german : c.english};
+  }
+  switch (terrain) {
+    case 1: return skylanders::FigureTrait{"vehicle:land", german ? "Landfahrzeug" : "Land Vehicle"};
+    case 2: return skylanders::FigureTrait{"vehicle:sky", german ? "Himmelsfahrzeug" : "Sky Vehicle"};
+    case 3: return skylanders::FigureTrait{"vehicle:sea", german ? "Seefahrzeug" : "Sea Vehicle"};
+    default: return std::nullopt;
+  }
 }
 
 std::shared_ptr<const FigureImage> Lookup(uint16_t id, uint16_t variant) {
@@ -398,6 +565,7 @@ void InstallToyImages(const std::filesystem::path& rom_dir) {
   std::thread(Load, rom_dir).detach();
   skylanders::SetFigureImageProvider(
       [](uint16_t id, uint16_t variant) { return Lookup(id, variant); });
+  skylanders::SetFigureTraitProvider([](uint16_t id, uint16_t) { return Trait(id); });
   skylanders::SetArtImageProvider([](const std::string& key) -> std::shared_ptr<const FigureImage> {
     std::lock_guard<std::mutex> lock(g_mutex);
     return g_ready ? Icon(key) : nullptr;
