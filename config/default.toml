@@ -93,6 +93,17 @@ address = 0x8287A750
 name = "SwapIntervalHook"
 registers = ["r3"]
 
+# 0x8289D9F8 computes the FXAA sample offsets (CFxaaParametersAttr: quality / console / 360 rcp frame)
+# from the frame size in f1 (width) and f2 (height), as SwapForceRecomp's sub_82B8E340 (found by its
+# instructions, all 59 the same). src/hooks/fxaa_scale_hook.cpp multiplies f1/f2 by the draw
+# resolution scale (fxaa_follow_resolution_scale, on) so the game's FXAA samples one host pixel
+# apart at resolution_scale 2 and up; it only changes the two inputs of a function that writes
+# nothing but the attr.
+[[midasm_hook]]
+address = 0x8289D9F8
+name = "FxaaFrameSizeHook"
+registers = ["f1", "f2"]
+
 [functions]
 # Function starts the analyzer put one instruction late. The first boot ended with "Call to invalid
 # or unregistered function at guest address 0x82562CB8":
