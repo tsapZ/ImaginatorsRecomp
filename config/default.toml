@@ -52,6 +52,17 @@ address = 0x826150B8
 name = "EdramDepthBaseHook"
 registers = ["r9", "r11"]
 
+# 0x82BA84D0 is the call from the scene camera's per-frame set-up to the perspective builder
+# sub_82547C30(r3 = projection matrix, f1 = horizontal FOV, f2 = vertical FOV, f3 = aspect, f4 =
+# near, f5 = far; radians), as in SwapForceRecomp (hook UltrawideFovHook): the builder found by Swap
+# Force's instructions, the call by a probe on all its callers (every frame, 16:9, the camera's
+# FOV). src/hooks/ultrawide_hook.cpp widens f3 (and f1, keeping the vertical FOV) for a window wider
+# than 16:9 with ultrawide_fov on; it only changes this call's arguments.
+[[midasm_hook]]
+address = 0x82BA84D0
+name = "UltrawideFovHook"
+registers = ["f1", "f2", "f3"]
+
 [functions]
 # Function starts the analyzer put one instruction late. The first boot ended with "Call to invalid
 # or unregistered function at guest address 0x82562CB8":

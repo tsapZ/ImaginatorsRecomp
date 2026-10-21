@@ -9,7 +9,7 @@ Imaginators Recompiled, the sixth Skylanders game, built the same way as the oth
 | 1 Recompile and boot | ✅ | codegen, first boot, menus and the first level |
 | 1.1 Portal | ✅ | emulated portal and the portal menu; the menu opening by itself at the game's prompt |
 | 2 In-game | 🟡 first level, intro skip | the first levels playable, saves, figures, intro skip |
-| 3 Polish | 🟡 native 3D picture (experimental option) | the game's pictures and names in the menus, high frame rate, resolution, ultrawide |
+| 3 Polish | 🟡 native 3D picture (experimental option), ultrawide | the game's pictures and names in the menus, high frame rate, resolution, ultrawide |
 
 ## Now, next, later
 
