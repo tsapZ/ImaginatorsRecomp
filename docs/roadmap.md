@@ -15,6 +15,6 @@ Imaginators Recompiled, the sixth Skylanders game, built the same way as the oth
 
 | When | What | Who |
 |---|---|---|
-| **Now** | Past the licence agreement, the menus and the first level; German from the PS3 files | me |
+| **Now** | German from the PS3 files; the portal menu with the game's pictures (licence, menus and the first level work since 2026-10-21) | me |
 | Next | Portal and portal menu (Phase 1.1), intro skip | me |
 | Later | The game's own pictures and names (its archive format) | me |
