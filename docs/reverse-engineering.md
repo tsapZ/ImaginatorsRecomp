@@ -41,7 +41,7 @@ manually in Ghidra first.
 | What | Why | Starting point |
 |---|---|---|
 | Callers of XAM ordinals 1185/1186 | portal read/write wrappers | import table |
-| Bink open/play functions | boot stalls, intro skip | strings like `.bik`, `movies/` |
+| Bink open/play functions | boot stalls, intro skip | found: BinkOpen's header read in sub_8329E078, hooked at 0x8329E248 |
 | Projection-matrix builder | ultrawide | the frustum math pattern described in `src/hooks/ultrawide_hook.cpp` |
 
 ## Naming convention

@@ -9,8 +9,8 @@ Updated at the end of every session. Only record what a build actually did.
 | Repository | scaffolded from GiantsRecomp: build, app, portal (emulated, USB, hybrid), portal / player / settings menus, achievements, input scripts and test tools; none of its game hooks or file readers |
 | Game data | disc extracted into `rom/` (5287 files), `default.xex` hash pinned |
 | SDK | our fork `tsapZ/rexglue-sdk`, branch `skylanders`, shared with the other games |
-| Codegen | works with 30 `config/default.toml` entries: function starts the analyzer put one instruction late |
-| Boot | ✅ the Activision and Toys for Bob logos, the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips) |
+| Codegen | works with 30 `config/default.toml` entries (function starts the analyzer put one instruction late) and one hook (the movie skip) |
+| Boot | ✅ the Activision and Toys for Bob logos (skipped by default, `skip_intro`), the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips; `skip_opening_movie` skips it, off by default) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
 | Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens |
 | Languages | this disc has **Spanish and Italian only**; German text (menus, texts, subtitles) from the owner's PS3 disc with tools/german_text.py, voices stay Spanish; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
@@ -51,3 +51,10 @@ Updated at the end of every session. Only record what a build actually did.
   the intro, the cutscenes and the first level with them works (no error, same timing); one of
   them decoded with ffmpeg is a valid 22 s voice. Whether the game plays them is for the owner to
   hear. Applied to this machine's rom/ (undo: `--restore`, then text only without `--voices`).
+- **Logo movies skipped** (src/hooks/intro_skip_hook.cpp, SuperChargers' hook): BinkOpen reads
+  the 44-byte movie header into r1+112 in sub_8329E078 (`li r6,44` and the "KB2f" compare after
+  it); the hook at 0x8329E248 sets the frame count of the two logo movies to 1 (`skip_intro`, on)
+  and, with `skip_opening_movie` (off), of FMV01_Cinematic.bk2, the new game's opening movie. The
+  movies are recognised by their header's size and frame count, unique among the disc's 133.
+  Checked by script: the title screen 8 s after the start, all three skipped and the game goes on
+  to the portal prompt.
