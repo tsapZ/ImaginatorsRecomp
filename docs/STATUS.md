@@ -104,3 +104,17 @@ Updated at the end of every session. Only record what a build actually did.
   library draws the menus' titles and text with them, Segoe UI filling in missing glyphs. Checked
   by script: the portal menu's title in the same letters as the game's "BITTE PLATZIERE DEINEN"
   behind it; names, tabs and hints in ProximaNova.
+- **The game's element badges and coin in the portal menu** (src/game/toy_images.cpp): the
+  menu drew its own; the HUD's element badges (skystonesSmashPortraits.pak, ui/HealthHud_2016/
+  Portraits/Elements, 128x128) and the ability shop's coin (JuiceDomain_ActionPacks.pak) are
+  handed to it now. This disc has nine of the ten badges: Air's is in none of its archives (the
+  other element sets lack it or Light, Dark or Water too), so the menu draws its own Air
+  medallion.
+- **Sharper icons where the disc has them:** the collection tracker (CollectibleTrackerIcons.pak)
+  has 128x128 copies of 49 characters' icons (SuperChargers' and this game's senseis); those are
+  taken instead of the 88x88 ones, and every icon is enlarged 2x.
+- **The later games' characters in their element groups:** the portal library knew the elements
+  of the first three games only, so this game's senseis, villains and creation crystals (and
+  Trap Team's and SuperChargers' characters) were under none. Its table now has them, read from
+  the games' own files (here: the toy data's +0x0C); the crystals by toy id. Checked by script:
+  the SuperChargers tab shows Splat, Soda Skimmer, Splatter Splasher under Magic.
