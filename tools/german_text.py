@@ -8,8 +8,15 @@ platform word differs (6 for the PS3, 5 for the Xbox 360). This tool puts the Ge
 the game reads the Spanish one: for every 360 archive with Spanish text it appends the PS3
 archive's German files to the end of the 360 archive, stored uncompressed, and points the Spanish
 entries at them. Nothing else in the archive changes, so the game, which falls back to Spanish
-on a German system, shows German menus and texts; the voices stay Spanish (the PS3's voice banks
-are MP3, which the 360 game can't play).
+on a German system, shows German menus and texts.
+
+With --voices the same is done for the voices: every Spanish voice archive ("<bank>_es.pak", 398)
+has a German twin on the PS3 ("<bank>_de.pak"), whose FMOD banks are MP3 (FSB5 codec 11)
+instead of the 360's XMA (codec 10). This game's FMOD has the MP3 codec compiled in ("FMOD MPEG
+Codec", fmod_codec_mpeg.cpp in the executable's strings), so the banks are used as they are.
+Entries are matched by name up to ".wav" (the encoding settings after it differ: 32000 / 48000
+Hz). 17917 voices in 396 archives (2026-10-21); the game runs through the intro and the first
+level with them, whether they are heard is still to check by ear (experimental).
 
 Checked 2026-10-21 on three archives (the front end, juicedomain_permanent, permanent): the save
 slots, the difficulty and the licence page's buttons come up in German, umlauts included.
@@ -41,6 +48,7 @@ import zlib
 BLOCK = 0x8000
 STORED = 0xFFFFFFFF
 SPANISH = "_es.lng"
+SPANISH_VOICES = "_es.pak"
 BACKUP_DIR = "german_text_backup"
 PLATFORM_PS3 = 6
 PLATFORM_XENON = 5
@@ -126,6 +134,7 @@ def find_7zip():
 
 
 def spanish_archives(archives_dir):
+    """The archives with Spanish text files in them."""
     out = []
     for name in sorted(os.listdir(archives_dir)):
         if not name.lower().endswith(".pak"):
@@ -139,10 +148,35 @@ def spanish_archives(archives_dir):
     return out
 
 
+def voice_archives(archives_dir):
+    """The Spanish voice archives (one per voice bank, "<bank>_es.pak")."""
+    return sorted(n for n in os.listdir(archives_dir) if n.lower().endswith(SPANISH_VOICES))
+
+
 def german_name(x360_name):
     """The PS3 archive's name of a 360 file's German twin, lower case."""
     lower = x360_name.lower().replace("/xenon/", "/ps3/")
     return lower[: -len(SPANISH)] + "_de.lng"
+
+
+def without_encoding(name):
+    """A voice's name without the build's encoding settings after ".wav", which differ between the
+    discs (".wav,0,32000,kDefaultFormat,40,1,0,0" on the 360, ".wav,0,48000,..." on the PS3)."""
+    at = name.find(".wav,")
+    return name[: at + 4] if at >= 0 else name
+
+
+def german_voice_name(x360_name):
+    """The PS3 archive's name of a 360 voice's German twin, lower case:
+    ".../xenon/.../voice/spanish/.../vo_x_1.wav,..." -> ".../ps3/.../voice/german/...",
+    ".../cutscene/APA1_Intro_gen_es.wav,..." -> ".../APA1_Intro_gen_de.wav,..."."""
+    return (x360_name.lower().replace("/xenon/", "/ps3/").replace("/spanish/", "/german/")
+            .replace("_es.wav", "_de.wav"))
+
+
+def ps3_voice_archive_name(x360_archive):
+    """The PS3 disc's German voice archive for a 360 Spanish one."""
+    return x360_archive.lower()[: -len(SPANISH_VOICES)] + "_de.pak"
 
 
 def ps3_archive_name(x360_archive):
@@ -150,19 +184,20 @@ def ps3_archive_name(x360_archive):
     return x360_archive.lower().replace("xenon", "ps3")
 
 
-def patch(archives_dir, name, ps3_path, backup_dir):
+def patch(archives_dir, name, ps3_path, backup_dir, voices=False):
+    """Points the Spanish entries of one 360 archive at the PS3 archive's German twins."""
     path = os.path.join(archives_dir, name)
     backup = os.path.join(backup_dir, name + ".json")
     if os.path.exists(backup):
         return 0, "already done"
     x = Archive(path)
     p = Archive(ps3_path)
-    german = {f[0].lower(): i for i, f in enumerate(p.files)}
+    german = {without_encoding(f[0].lower()): i for i, f in enumerate(p.files)}
     changes = []
     for i, (fname, ordoff, length, block) in enumerate(x.files):
-        if not fname.lower().endswith(SPANISH):
+        if not voices and not fname.lower().endswith(SPANISH):
             continue
-        j = german.get(german_name(fname))
+        j = german.get(without_encoding(german_voice_name(fname) if voices else german_name(fname)))
         if j is None:
             continue
         data = bytearray(p.read(j))
@@ -218,6 +253,9 @@ def main():
     parser.add_argument("--rom", default="rom", help="the extracted 360 disc (default: rom)")
     parser.add_argument("--ps3", help="the PS3 disc: its .iso, or its extracted PS3_GAME\\USRDIR folder")
     parser.add_argument("--restore", action="store_true", help="put the 360 disc's archives back as they were")
+    parser.add_argument("--voices", action="store_true",
+                        help="also the German voices (experimental: the PS3's MP3 banks, which this game's "
+                             "FMOD has a decoder for)")
     args = parser.parse_args()
     archives_dir = os.path.join(args.rom, "archives")
     if not os.path.isdir(archives_dir):
@@ -229,6 +267,9 @@ def main():
         sys.exit("Give the PS3 disc with --ps3 (an .iso or its PS3_GAME\\USRDIR folder).")
     names = spanish_archives(archives_dir)
     print("%d archives with Spanish text." % len(names))
+    voices = voice_archives(archives_dir) if args.voices else []
+    if voices:
+        print("%d Spanish voice archives." % len(voices))
     backup_dir = os.path.join(archives_dir, BACKUP_DIR)
     os.makedirs(backup_dir, exist_ok=True)
     temp = None
@@ -242,6 +283,8 @@ def main():
             with open(listing, "w", encoding="utf-8") as l:
                 for name in names:
                     l.write("PS3_GAME\\USRDIR\\archives\\%s\n" % ps3_archive_name(name))
+                for name in voices:
+                    l.write("PS3_GAME\\USRDIR\\archives\\%s\n" % ps3_voice_archive_name(name))
             print("Unpacking the PS3 archives with 7-Zip ...")
             # 7-Zip reports this disc's UDF image with a header warning (exit code 2) but reads it.
             subprocess.run([seven, "e", args.ps3, "-i@" + listing, "-o" + temp, "-y"],
@@ -261,7 +304,20 @@ def main():
             done += 1 if n else 0
             if k % 50 == 0 or k == len(names):
                 print("  %d / %d archives, %d text files German" % (k, len(names), total))
-        print("Done: %d text files in %d archives are German now. Undo with --restore." % (total, done))
+        print("Done: %d text files in %d archives are German now." % (total, done))
+        total = done = 0
+        for k, name in enumerate(voices, 1):
+            ps3_path = ps3_files.get(ps3_voice_archive_name(name))
+            if not ps3_path:
+                continue
+            n, how = patch(archives_dir, name, ps3_path, backup_dir, voices=True)
+            total += n
+            done += 1 if n else 0
+            if k % 100 == 0 or k == len(voices):
+                print("  %d / %d voice archives, %d voices German" % (k, len(voices), total))
+        if voices:
+            print("Done: %d voices in %d archives are German now." % (total, done))
+        print("Undo everything with --restore.")
     finally:
         if temp:
             shutil.rmtree(temp, ignore_errors=True)

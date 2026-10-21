@@ -44,3 +44,10 @@ Updated at the end of every session. Only record what a build actually did.
   the cutscene hints, the portal prompt and the figure intro are German; "Pulsa START" / "Nueva
   partida" (the 360's own platform strings) and the licence text stay Spanish. Applied to this
   machine's rom/ (undo: `--restore`).
+- **German voices, experimental** (`tools/german_text.py --voices`): the PS3's German voice
+  banks are MP3 (FSB5 codec 11); the executable has FMOD's MP3 codec ("FMOD MPEG Codec",
+  fmod_codec_mpeg.cpp), so the banks go in as they are, matched by name up to ".wav" (the encoding
+  settings after it differ, 32000 / 48000 Hz). 17917 voices in 396 of 398 archives. A run through
+  the intro, the cutscenes and the first level with them works (no error, same timing); one of
+  them decoded with ffmpeg is a valid 22 s voice. Whether the game plays them is for the owner to
+  hear. Applied to this machine's rom/ (undo: `--restore`, then text only without `--voices`).

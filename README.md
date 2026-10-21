@@ -21,9 +21,11 @@ See [docs/STATUS.md](docs/STATUS.md) and [docs/roadmap.md](docs/roadmap.md).
 
 The Xbox 360 disc this port is made for has Spanish and Italian only. If you also own the PS3
 disc of the game, `tools/german_text.py` puts its German text into your extracted 360 disc
-(`rom/`); the game then shows German menus, texts and subtitles. The voices stay Spanish.
+(`rom/`); the game then shows German menus, texts and subtitles. With `--voices` it also puts
+in the German voices (experimental: the PS3's voices are MP3, which this game's sound engine has
+a decoder for; not yet heard in the game).
 
-    python tools/german_text.py --ps3 "D:\path\to\the PS3 disc.iso"
+    python tools/german_text.py --ps3 "D:\path\to\the PS3 disc.iso" [--voices]
     python tools/german_text.py --restore        (back to the disc's Spanish)
 
 It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3
