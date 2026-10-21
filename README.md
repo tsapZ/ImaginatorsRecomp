@@ -1,7 +1,7 @@
 # ImaginatorsRecomp
 
 An unofficial native Windows port of **Skylanders: Imaginators** (Xbox 360), made with static
-recompilation (ReXGlue). Work in progress: it boots to the title screen and the licence agreement.
+recompilation (ReXGlue). Work in progress: it boots through the title screen, the licence agreement and the menus into a new game's opening cutscene.
 
 You need your own copy of the game: nothing from the game is in this repository.
 
@@ -12,7 +12,7 @@ See [docs/STATUS.md](docs/STATUS.md) and [docs/roadmap.md](docs/roadmap.md).
 | Area | State |
 |---|---|
 | Build | ✅ codegen and build |
-| Boot | 🟡 title, licence agreement |
+| Boot | ✅ title, licence agreement (accept with Y), save slots, difficulty, opening cutscene |
 | Portal | ⬜ (the portal code is in, not tried with this game) |
 
 ## Building

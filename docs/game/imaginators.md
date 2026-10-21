@@ -48,6 +48,12 @@ What it means:
   game's FMOD to play the PS3's MPEG banks (to test: FMOD has a software MPEG decoder on most
   platforms) or a re-encode to PCM or XMA; the text needs the German entries of the shared
   archives and the game to accept German (its language list in the XEX or `build.xml`).
+- **Voice codecs, measured (2026-10-21):** every FSB5 bank header in the 360's archives says
+  XMA (67,068 headers over all 5,128 archives, codec 10), so this game's FMOD build is never seen
+  playing anything else. The SDK's FFmpeg (thirdparty/ffmpeg-overlay/codec_list.c) has the MP3
+  decoder, so the recomp could turn a PS3 MPEG bank into a PCM16 bank (FSB5 codec 2) when the game
+  reads it. Whether the 360 FMOD plays PCM16 banks is the first thing to test (one bank swapped by
+  hand), before building the overlay.
 - **For a German 360 ISO:** additionally XMA banks (the console has no MPEG playback in this
   game, unless its FMOD build has the codec) and the language unlocked in the executable; a
   rebuilt image then needs the 360's layout (extract-xiso can build one).
