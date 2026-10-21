@@ -12,6 +12,7 @@ Updated at the end of every session. Only record what a build actually did.
 | Codegen | works with 30 `config/default.toml` entries: function starts the analyzer put one instruction late |
 | Boot | ✅ the Activision and Toys for Bob logos, the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
+| Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; it doesn't open by itself yet |
 | Languages | this disc has **Spanish and Italian only**; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
 
 ## 2026-10-21: session log
@@ -24,3 +25,9 @@ Updated at the end of every session. Only record what a build actually did.
 - **The licence agreement doesn't take the script's input:** the game runs at 30 FPS there, but neither A (Aceptar) nor the next-page button react to the input script, also held for 600 ms and with key events (the script device now sends them like the SDL driver; the SDK answers XInputGetKeystroke for any user with player 1). Next: try it with a real controller, then find what the screen polls.
 - **Solved the same morning: the licence is accepted with Y, not A.** The page's hints are "(Y) Aceptar" and "(RB) Página siguiente" (seen enlarged in a screenshot). With `tap y` the game goes on to "Elige ranura de guardado" (four empty slots, "Nueva partida"), "Elige tu dificultad" and the opening cutscene of a new game, which shows "Pulsa (Y) para omitir".
 - **First level:** from a fresh user data folder, Y on the licence, A on the slot and the difficulty, Y through the cutscenes and a Spyro figure on the emulated portal: the game goes through the portal's swirl into the first level, Spyro runs in the jungle with his portrait and health bar in the HUD (screenshots 150-220 s into the run). One Y too many opened the pause menu's "restart the level?", which A answered with No.
+
+- **The game's pictures in the portal menu** (src/game/toy_images.cpp, taken over from
+  SuperChargersRecomp with its Alchemy readers): this disc has the same toy data layout,
+  permanent.pak with ToyData/<Name>_ToyData.igz (IGZ version 9) and ToyCollectionMaterials.pak with
+  the collection icons. 281 toys, 308 variants, 565 icons in 435 ms. Checked by script in the first
+  level: the pages of every game show their pictures, the Imaginators page its creation crystals.

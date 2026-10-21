@@ -41,7 +41,12 @@ endif()
 # Sources
 set(IMAGINATORSRECOMP_SOURCES
     src/main.cpp
+    src/game/alchemy/iga_archive.cpp
+    src/game/alchemy/igz_file.cpp
+    src/game/alchemy/inflate.cpp
+    src/game/alchemy/lzma_decoder.cpp
     src/game/kernel_stubs.cpp
+    src/game/toy_images.cpp
     src/localization.cpp
     src/settings_pages.cpp
     src/dev/gpu_diagnostics.cpp
@@ -60,6 +65,8 @@ rexglue_setup_target(imaginatorsrecompiled GPU_PLUGINS xenos)
 if(REXSDK_DIR)
     # An installed SDK ships imgui's headers next to its own; an in-tree build must point at them.
     target_include_directories(imaginatorsrecompiled PRIVATE "${REXSDK_DIR}/thirdparty/imgui")
+    # stb_image's zlib decoder for the deflate-compressed game archives (src/game/alchemy/inflate.cpp).
+    target_include_directories(imaginatorsrecompiled PRIVATE "${REXSDK_DIR}/thirdparty/stb")
 endif()
 
 # Seed a fresh build dir with the settings-file template. Never overwrites an existing one: the
