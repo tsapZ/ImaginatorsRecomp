@@ -124,3 +124,9 @@ Updated at the end of every session. Only record what a build actually did.
   to the window's width at the UI's height where the sizes are read for drawing, so the HUD and the
   menus keep their proportions at the window's edges. Checked by script in a 2560x1080 window:
   the pause menu (its progress screen), nothing left uncovered.
+- **Movies on ultrawide** (2026-10-21): the logo movies and the opening movie are 16:9 Bink
+  movies; while one plays the presenter shows it with black bars at the sides instead of
+  stretched (present_use_actual_aspect off and present_letterbox on for that time, not saved).
+  Start: BinkOpen's header hook; end: a hook at the start of BinkClose (sub_832A04B8, called only
+  from the game's movie close). Checked by script in a 2560x1080 window with skip_intro off: the
+  logos 16:9 in the middle, the screen after them fills the window again.
