@@ -25,6 +25,7 @@
 #include <rex/system/xmemory.h>
 #include <rex/ui/keybinds.h>
 #include <rex/ui/ui_event.h>
+#include <rex/ui/virtual_key.h>
 
 #include "portal_rex/portal_menu_input.h"
 #include "portal_rex/portal_rex.h"
@@ -529,13 +530,12 @@ class ScriptInputDriver final : public rex::input::InputDriver {
     out.push_back(info);
   }
 
-  X_RESULT GetDeviceState(rex::input::DeviceId id, rex::input::X_INPUT_STATE* out_state) override {
-    if (id != kScriptDevice) return X_ERROR_DEVICE_NOT_CONNECTED;
-    if (!out_state) return X_ERROR_SUCCESS;
+  // What the script presses right now.
+  void Current(uint16_t& buttons, bool& lt, bool& rt, double& x, double& y) const {
     const double now = std::chrono::duration<double>(Clock::now() - start_).count();
-    uint16_t buttons = 0;
-    bool lt = false, rt = false;
-    double x = 0.0, y = 0.0;
+    buttons = 0;
+    lt = rt = false;
+    x = y = 0.0;
     for (const Event& e : events_) {
       if (now < e.start || now >= e.start + e.duration) continue;
       if (e.kind == Event::Kind::kPress) {
@@ -547,6 +547,15 @@ class ScriptInputDriver final : public rex::input::InputDriver {
         y = e.y;
       }
     }
+  }
+
+  X_RESULT GetDeviceState(rex::input::DeviceId id, rex::input::X_INPUT_STATE* out_state) override {
+    if (id != kScriptDevice) return X_ERROR_DEVICE_NOT_CONNECTED;
+    if (!out_state) return X_ERROR_SUCCESS;
+    uint16_t buttons;
+    bool lt, rt;
+    double x, y;
+    Current(buttons, lt, rt, x, y);
     std::memset(out_state, 0, sizeof(*out_state));
     out_state->packet_number = ++packet_number_;
     out_state->gamepad.buttons = buttons;
@@ -577,12 +586,49 @@ class ScriptInputDriver final : public rex::input::InputDriver {
     return id == kScriptDevice ? X_ERROR_SUCCESS : X_ERROR_DEVICE_NOT_CONNECTED;
   }
 
+  // Key events for the presses, like the SDL driver makes them from a controller's state: one
+  // down or up event per call for each button that changed, so screens that read XInputGetKeystroke
+  // (Imaginators' licence agreement) see the script's taps too. No key repeat.
   X_RESULT GetDeviceKeystroke(rex::input::DeviceId id, uint32_t,
-                              rex::input::X_INPUT_KEYSTROKE*) override {
-    return id == kScriptDevice ? X_ERROR_EMPTY : X_ERROR_DEVICE_NOT_CONNECTED;
+                              rex::input::X_INPUT_KEYSTROKE* out_keystroke) override {
+    if (id != kScriptDevice) return X_ERROR_DEVICE_NOT_CONNECTED;
+    if (!out_keystroke) return X_ERROR_BAD_ARGUMENTS;
+    struct Key {
+      uint32_t bit;  // in the field below: the 16 buttons, then 16 = LT, 17 = RT
+      rex::ui::VirtualKey vk;
+    };
+    using rex::ui::VirtualKey;
+    static constexpr Key kKeys[] = {
+        {0, VirtualKey::kXInputPadDpadUp},     {1, VirtualKey::kXInputPadDpadDown},
+        {2, VirtualKey::kXInputPadDpadLeft},   {3, VirtualKey::kXInputPadDpadRight},
+        {4, VirtualKey::kXInputPadStart},      {5, VirtualKey::kXInputPadBack},
+        {6, VirtualKey::kXInputPadLThumbPress}, {7, VirtualKey::kXInputPadRThumbPress},
+        {8, VirtualKey::kXInputPadLShoulder},  {9, VirtualKey::kXInputPadRShoulder},
+        {12, VirtualKey::kXInputPadA},         {13, VirtualKey::kXInputPadB},
+        {14, VirtualKey::kXInputPadX},         {15, VirtualKey::kXInputPadY},
+        {16, VirtualKey::kXInputPadLTrigger},  {17, VirtualKey::kXInputPadRTrigger},
+    };
+    uint16_t buttons;
+    bool lt, rt;
+    double x, y;
+    Current(buttons, lt, rt, x, y);
+    const uint32_t now = buttons | (lt ? 1u << 16 : 0) | (rt ? 1u << 17 : 0);
+    const uint32_t changed = now ^ keys_down_;
+    for (const Key& k : kKeys) {
+      const uint32_t mask = 1u << k.bit;
+      if (!(changed & mask)) continue;
+      keys_down_ ^= mask;
+      std::memset(out_keystroke, 0, sizeof(*out_keystroke));
+      out_keystroke->virtual_key = uint16_t(k.vk);
+      out_keystroke->flags = (now & mask) ? rex::input::X_INPUT_KEYSTROKE_KEYDOWN
+                                          : rex::input::X_INPUT_KEYSTROKE_KEYUP;
+      return X_ERROR_SUCCESS;
+    }
+    return X_ERROR_EMPTY;
   }
 
  private:
+  uint32_t keys_down_ = 0;  // GetDeviceKeystroke's last reported state
   std::vector<Event> events_;
   std::function<uint64_t()> guest_frame_count_;
   rex::memory::Memory* memory_;
