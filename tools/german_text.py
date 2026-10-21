@@ -41,6 +41,11 @@ Usage (from the repository folder, with the 360 disc extracted to rom/ as for pl
 An ISO is read with 7-Zip (7z.exe on the PATH or in "C:\\Program Files\\7-Zip"); about 2.3 GB of
 PS3 archives are unpacked into a temporary folder and deleted afterwards.
 
+Since the same day the tool also takes another Xbox 360 disc of the game as the source (--xbox360,
+an .iso unpacked with extract-xiso or an extracted folder: the same paths, the game's own XMA
+voices), as for SuperChargers, whose owner has the European English / German one; and
+--language en puts in English instead of German (from either disc).
+
 Only the Python standard library is used.
 """
 
@@ -63,6 +68,23 @@ BACKUP_DIR = "german_text_backup"
 PLATFORM_PS3 = 6
 PLATFORM_XENON = 5
 XENON_STRINGS = "xenonplatformstrings_es.lng"
+
+# Per target language: the files' suffix, the voices' folder, a cutscene voice's ending (English
+# ones have none: "APA1_Intro_gen.wav"), the name in messages.
+LANGUAGES = {"de": ("_de", "/german/", "_de.wav", "German"),
+             "en": ("_en", "/english/", ".wav", "English")}
+# What the run takes its files from: "ps3" (the PS3 disc, renamed paths, platform word 6 -> 5) or
+# "xenon" (another Xbox 360 disc of the game, e.g. a European English / German one: the same
+# paths and the 360's own voice banks). Set by main().
+SOURCE = {"platform": "ps3", "language": "de"}
+
+
+def lang():
+    return LANGUAGES[SOURCE["language"]]
+
+
+def from_ps3():
+    return SOURCE["platform"] == "ps3"
 
 # The 360 platform strings whose Spanish text differs from both PS3 disc files (they name Xbox
 # Live, the gamertag or the 360's START button), in German in the PS3 disc's wording.
@@ -299,9 +321,11 @@ def voice_archives(archives_dir):
 
 
 def german_name(x360_name):
-    """The PS3 archive's name of a 360 file's German twin, lower case."""
-    lower = x360_name.lower().replace("/xenon/", "/ps3/")
-    return lower[: -len(SPANISH)] + "_de.lng"
+    """The source archive's name of a 360 file's twin in the target language, lower case."""
+    lower = x360_name.lower()
+    if from_ps3():
+        lower = lower.replace("/xenon/", "/ps3/")
+    return lower[: -len(SPANISH)] + lang()[0] + ".lng"
 
 
 def without_encoding(name):
@@ -312,21 +336,23 @@ def without_encoding(name):
 
 
 def german_voice_name(x360_name):
-    """The PS3 archive's name of a 360 voice's German twin, lower case:
+    """The source archive's name of a 360 voice's twin, lower case (German from the PS3):
     ".../xenon/.../voice/spanish/.../vo_x_1.wav,..." -> ".../ps3/.../voice/german/...",
     ".../cutscene/APA1_Intro_gen_es.wav,..." -> ".../APA1_Intro_gen_de.wav,..."."""
-    return (x360_name.lower().replace("/xenon/", "/ps3/").replace("/spanish/", "/german/")
-            .replace("_es.wav", "_de.wav"))
+    lower = x360_name.lower()
+    if from_ps3():
+        lower = lower.replace("/xenon/", "/ps3/")
+    return lower.replace("/spanish/", lang()[1]).replace("_es.wav", lang()[2])
 
 
 def ps3_voice_archive_name(x360_archive):
-    """The PS3 disc's German voice archive for a 360 Spanish one."""
-    return x360_archive.lower()[: -len(SPANISH_VOICES)] + "_de.pak"
+    """The source disc's voice archive in the target language for a 360 Spanish one."""
+    return x360_archive.lower()[: -len(SPANISH_VOICES)] + lang()[0] + ".pak"
 
 
 def ps3_archive_name(x360_archive):
-    """The PS3 disc's archive for a 360 one (the two Xbox 360 ones have PS3 twins by name)."""
-    return x360_archive.lower().replace("xenon", "ps3")
+    """The source disc's archive for a 360 one (the two Xbox 360 ones have PS3 twins by name)."""
+    return x360_archive.lower().replace("xenon", "ps3") if from_ps3() else x360_archive.lower()
 
 
 def patch(archives_dir, name, ps3_path, backup_dir, voices=False):
@@ -398,7 +424,7 @@ def disc_german(archives_dir, backup_dir):
         changes = []
         for i, f in enumerate(x.files):
             root, ext = os.path.splitext(f[0].lower())
-            j = x.find(root[:-3] + "_de" + ext) if root.endswith("_es") and ext != ".lng" else None
+            j = x.find(root[:-3] + lang()[0] + ext) if root.endswith("_es") and ext != ".lng" else None
             if j is not None:
                 changes.append((i, j))
         if changes:
@@ -427,8 +453,9 @@ def platform_strings(archives_dir, ps3_path, backup_dir):
         j = next((k for k, f in enumerate(p.files) if f[0].lower().endswith("/" + file_name)), None)
         return lng_texts(p.read(j)) if j is not None else {}
 
-    sources = [(ps3_texts("ps3platformstrings_es.lng"), ps3_texts("ps3platformstrings_de.lng")),
-               (ps3_texts("pcplatformstrings_es.lng"), ps3_texts("pcplatformstrings_de.lng"))]
+    suffix = lang()[0]
+    sources = [(ps3_texts("ps3platformstrings_es.lng"), ps3_texts("ps3platformstrings%s.lng" % suffix)),
+               (ps3_texts("pcplatformstrings_es.lng"), ps3_texts("pcplatformstrings%s.lng" % suffix))]
     german, missing = {}, []
     for key, text in spanish.items():
         for their_spanish, their_german in sources:
@@ -436,7 +463,7 @@ def platform_strings(archives_dir, ps3_path, backup_dir):
                 german[key] = their_german[key]
                 break
         else:
-            if key in XENON_GERMAN:
+            if key in XENON_GERMAN and SOURCE["language"] == "de":
                 german[key] = XENON_GERMAN[key]
             else:
                 missing.append(key)
@@ -476,14 +503,30 @@ def restore(archives_dir):
     print("Restored %d archives to the disc's state." % restored)
 
 
+def find_extract_xiso():
+    """extract-xiso (on the PATH, or the copy in this repository's installer folder)."""
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "installer", "extract-xiso.exe")
+    for candidate in ("extract-xiso", "extract-xiso.exe", here):
+        path = shutil.which(candidate) or (candidate if os.path.isfile(candidate) else None)
+        if path:
+            return path
+    return None
+
+
 def main():
-    parser = argparse.ArgumentParser(description="German text from the PS3 disc for this game's 360 disc.")
+    parser = argparse.ArgumentParser(
+        description="German (or English) text and voices for this game's Spanish / Italian 360 disc, "
+                    "from another disc of the game you own.")
     parser.add_argument("--rom", default="rom", help="the extracted 360 disc (default: rom)")
     parser.add_argument("--ps3", help="the PS3 disc: its .iso, or its extracted PS3_GAME\\USRDIR folder")
+    parser.add_argument("--xbox360", help="another Xbox 360 disc with the language (e.g. the European "
+                                          "English / German one): its .iso, or its extracted folder")
+    parser.add_argument("--language", choices=sorted(LANGUAGES), default="de",
+                        help="the language to put in: de (German, the default) or en (English)")
     parser.add_argument("--restore", action="store_true", help="put the 360 disc's archives back as they were")
     parser.add_argument("--voices", action="store_true",
-                        help="also the German voices (experimental: the PS3's MP3 banks, which this game's "
-                             "FMOD has a decoder for)")
+                        help="also the voices (from an Xbox 360 disc they are the game's own; from the PS3 "
+                             "disc experimental: MP3 banks, which this game's FMOD has a decoder for)")
     args = parser.parse_args()
     archives_dir = os.path.join(args.rom, "archives")
     if not os.path.isdir(archives_dir):
@@ -491,8 +534,12 @@ def main():
     if args.restore:
         restore(archives_dir)
         return
-    if not args.ps3:
-        sys.exit("Give the PS3 disc with --ps3 (an .iso or its PS3_GAME\\USRDIR folder).")
+    if bool(args.ps3) == bool(args.xbox360):
+        sys.exit("Give the other disc with --ps3 or with --xbox360 (an .iso or its extracted folder).")
+    SOURCE["platform"] = "ps3" if args.ps3 else "xenon"
+    SOURCE["language"] = args.language
+    source = args.ps3 or args.xbox360
+    language = lang()[3]
     names = spanish_archives(archives_dir)
     print("%d archives with Spanish text." % len(names))
     voices = voice_archives(archives_dir) if args.voices else []
@@ -505,13 +552,13 @@ def main():
     names = [n for n in names if not os.path.exists(os.path.join(backup_dir, n + ".json"))]
     voices = [n for n in voices if not os.path.exists(os.path.join(backup_dir, n + ".json"))]
     if done_before:
-        print("%d archives are German from an earlier run already." % done_before)
+        print("%d archives are done from an earlier run already." % done_before)
     wanted = [ps3_archive_name(n) for n in names] + [ps3_voice_archive_name(n) for n in voices]
-    if not os.path.exists(os.path.join(backup_dir, "permanent_xenon.pak.platform.json")):
+    if from_ps3() and not os.path.exists(os.path.join(backup_dir, "permanent_xenon.pak.platform.json")):
         wanted.append("permanent_ps3.pak")
     temp = None
     try:
-        if os.path.isfile(args.ps3):
+        if os.path.isfile(source) and from_ps3():
             seven = find_7zip()
             if not seven:
                 sys.exit("7-Zip is needed to read the PS3 .iso (or extract its PS3_GAME\\USRDIR yourself).")
@@ -522,43 +569,51 @@ def main():
                     l.write("PS3_GAME\\USRDIR\\archives\\%s\n" % name)
             print("Unpacking the PS3 archives with 7-Zip ...")
             # 7-Zip reports this disc's UDF image with a header warning (exit code 2) but reads it.
-            subprocess.run([seven, "e", args.ps3, "-i@" + listing, "-o" + temp, "-y"],
+            subprocess.run([seven, "e", source, "-i@" + listing, "-o" + temp, "-y"],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            ps3_dir = temp
+            source_dir = temp
+        elif os.path.isfile(source):
+            xiso = find_extract_xiso()
+            if not xiso:
+                sys.exit("extract-xiso is needed to read the Xbox 360 .iso (or extract it yourself).")
+            temp = tempfile.mkdtemp(prefix="german_text_")
+            print("Unpacking the Xbox 360 disc with extract-xiso (about 8 GB, a few minutes) ...")
+            subprocess.run([xiso, "-d", temp, source], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            source_dir = os.path.join(temp, "archives")
         else:
-            ps3_dir = os.path.join(args.ps3, "archives") if os.path.isdir(os.path.join(args.ps3, "archives")) else args.ps3
-        ps3_files = {n.lower(): os.path.join(ps3_dir, n) for n in os.listdir(ps3_dir)}
+            source_dir = os.path.join(source, "archives") if os.path.isdir(os.path.join(source, "archives")) else source
+        source_files = {n.lower(): os.path.join(source_dir, n) for n in os.listdir(source_dir)}
         total = done = 0
         for k, name in enumerate(names, 1):
-            ps3_path = ps3_files.get(ps3_archive_name(name))
-            if not ps3_path:
-                print("  %s: not on the PS3 disc, stays Spanish" % name)
+            source_path = source_files.get(ps3_archive_name(name))
+            if not source_path:
+                print("  %s: not on the other disc, stays Spanish" % name)
                 continue
-            n, how = patch(archives_dir, name, ps3_path, backup_dir)
+            n, how = patch(archives_dir, name, source_path, backup_dir)
             total += n
             done += 1 if n else 0
             if k % 50 == 0 or k == len(names):
-                print("  %d / %d archives, %d text files German" % (k, len(names), total))
-        print("Done: %d text files in %d archives are German now." % (total, done))
+                print("  %d / %d archives, %d text files %s" % (k, len(names), total, language))
+        print("Done: %d text files in %d archives are %s now." % (total, done, language))
         n = disc_german(archives_dir, backup_dir)
         if n:
-            print("The licence agreement: %d file(s) pointed at the disc's own German one." % n)
-        if "permanent_ps3.pak" in ps3_files:
-            missing = platform_strings(archives_dir, ps3_files["permanent_ps3.pak"], backup_dir)
-            print("The Xbox 360's own texts (title screen, save slots, Xbox Live) are German now%s." %
-                  ("; Spanish still: " + ", ".join(k.split("::")[-1] for k in missing) if missing else ""))
+            print("The licence agreement: %d file(s) pointed at the disc's own %s one." % (n, language))
+        if "permanent_ps3.pak" in source_files:
+            missing = platform_strings(archives_dir, source_files["permanent_ps3.pak"], backup_dir)
+            print("The Xbox 360's own texts (title screen, save slots, Xbox Live) are %s now%s." %
+                  (language, "; Spanish still: " + ", ".join(k.split("::")[-1] for k in missing) if missing else ""))
         total = done = 0
         for k, name in enumerate(voices, 1):
-            ps3_path = ps3_files.get(ps3_voice_archive_name(name))
-            if not ps3_path:
+            source_path = source_files.get(ps3_voice_archive_name(name))
+            if not source_path:
                 continue
-            n, how = patch(archives_dir, name, ps3_path, backup_dir, voices=True)
+            n, how = patch(archives_dir, name, source_path, backup_dir, voices=True)
             total += n
             done += 1 if n else 0
             if k % 100 == 0 or k == len(voices):
-                print("  %d / %d voice archives, %d voices German" % (k, len(voices), total))
+                print("  %d / %d voice archives, %d voices %s" % (k, len(voices), total, language))
         if voices:
-            print("Done: %d voices in %d archives are German now." % (total, done))
+            print("Done: %d voices in %d archives are %s now." % (total, done, language))
         print("Undo everything with --restore.")
     finally:
         if temp:
