@@ -73,7 +73,8 @@ Updated at the end of every session. Only record what a build actually did.
   found in a dump of this game's code by their instructions. With it on the scene is drawn at
   1264x704 with the SDK's 4096-tile EDRAM (D3D12). Checked by script in the first level: the target
   goes 1040x620 -> 1264x704, the scene draws right, the edges about 7 % sharper (mean gradient of
-  the same frame), no crash.
+  the same frame), no crash. Loading the save three times with it (where Swap Force had crashed at
+  the screen's exact size): loaded and played on each time.
 - **Ultrawide** (src/hooks/ultrawide_hook.cpp, `ultrawide_fov`, on): a window wider than 16:9
   (`resolution`) shows more to the sides instead of black bars, as in SwapForceRecomp. The
   perspective builder (sub_82547C30) found by Swap Force's instructions in a dump of this game's
