@@ -13,7 +13,7 @@ Updated at the end of every session. Only record what a build actually did.
 | Boot | ✅ the Activision and Toys for Bob logos, the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
 | Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens |
-| Languages | this disc has **Spanish and Italian only**; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
+| Languages | this disc has **Spanish and Italian only**; German text (menus, texts, subtitles) from the owner's PS3 disc with tools/german_text.py, voices stay Spanish; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
 
 ## 2026-10-21: session log
 
@@ -38,3 +38,9 @@ Updated at the end of every session. Only record what a build actually did.
   snapshots of .data and the physical heap at "Coloca tu Skylander" and in play. Checked by script:
   the menu came up by itself at the prompt, A and A put Double Trouble on, and he played in the
   first level with his HUD portrait.
+- **German text from the PS3 disc** (tools/german_text.py, stdlib Python + 7-Zip for the ISO):
+  the 360 archives' Spanish .lng files get the PS3 archives' German twins appended and the entries
+  pointed at them (1304 of 1306, in 13 s). A test with three archives first, then all: the menus,
+  the cutscene hints, the portal prompt and the figure intro are German; "Pulsa START" / "Nueva
+  partida" (the 360's own platform strings) and the licence text stay Spanish. Applied to this
+  machine's rom/ (undo: `--restore`).

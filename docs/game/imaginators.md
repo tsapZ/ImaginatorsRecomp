@@ -41,6 +41,16 @@ Measured 2026-10-21 on both dumps:
 - The game's text is not in these per-language files; it is probably in the shared archives with
   per-language entries (to check with an IGA v11 reader).
 
+**Done for the text (2026-10-21):** `tools/german_text.py` appends the PS3's German .lng files
+to the 360 archives and points the Spanish entries at them (IGZ platform word 6 -> 5, nothing
+else changed; the way back is saved per archive). 1304 of the 1306 Spanish text files in 414
+archives get their German twin; the two left are the Xbox 360's own platform strings
+(`strings/xenonPlatformStrings_es.lng` in permanent_xenon.pak: "Pulsa START", "Nueva partida"),
+whose PS3 counterpart has other keys. Checked by script: the save slots, the difficulty, the
+cutscene hint ("Drücke Y zum Überspringen"), the portal prompt ("Bitte platziere deinen
+Skylander ...") and the figure intro come up in German. The licence's text is Spanish still
+(not in these files). The voices stay Spanish.
+
 What it means:
 
 - **For this port:** German can come from the owner's PS3 files at run time (an overlay folder the
