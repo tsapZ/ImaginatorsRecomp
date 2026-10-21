@@ -66,3 +66,11 @@ Updated at the end of every session. Only record what a build actually did.
   for the tool. The .lng writer reproduces the game's files byte for byte; `--restore` now undoes
   several steps on one archive. Checked by script: "Drücke START", the licence in German,
   "Neues Spiel" and "Lizenz" on the save slots. Applied to this machine's rom/.
+- **Native 3D picture, experimental** (src/hooks/scene_size_hook.cpp, `scene_size`, Graphics page,
+  off by default): the 360 draws the 3D scene at 1040x620 (mainScene in standard_renderer.igz in
+  LooseFiles.pak) and stretches it to 720p. SwapForceRecomp's hook, the same render code: the target
+  size function (0x826F96D0) and the three EDRAM places (planning heap, tiling decision, depth base)
+  found in a dump of this game's code by their instructions. With it on the scene is drawn at
+  1264x704 with the SDK's 4096-tile EDRAM (D3D12). Checked by script in the first level: the target
+  goes 1040x620 -> 1264x704, the scene draws right, the edges about 7 % sharper (mean gradient of
+  the same frame), no crash.

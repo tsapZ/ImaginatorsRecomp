@@ -49,6 +49,7 @@ set(IMAGINATORSRECOMP_SOURCES
     src/game/magic_moment_watch.cpp
     src/game/toy_images.cpp
     src/hooks/intro_skip_hook.cpp
+    src/hooks/scene_size_hook.cpp
     src/localization.cpp
     src/settings_pages.cpp
     src/dev/gpu_diagnostics.cpp
