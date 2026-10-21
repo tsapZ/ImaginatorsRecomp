@@ -54,6 +54,7 @@
 
 #include "toy_images.h"
 
+#include "controller_picture.h"
 #include "hats.h"
 #include "toy_upgrades.h"
 
@@ -503,6 +504,12 @@ void Load(std::filesystem::path rom) {
   int symbols = 0;
   for (const char* name : {kElementArchive, kCoinArchive, kTerrainArchive, kClassArchive}) {
     if (auto art = IgaArchive::Open(rom / "archives" / name)) symbols += IndexArt(*art, icons);
+  }
+  if (auto controls = IgaArchive::Open(rom / "archives" / "Controller_SchemeXenon.pak")) {
+    if (auto picture = ReadControllerPicture(*controls)) {
+      icons[kControllerArtKey] = std::move(picture);
+      ++symbols;
+    }
   }
   std::unordered_map<uint16_t, size_t> classes;
   if (auto list = IgaArchive::Open(rom / "archives" / kClassListArchive)) classes = IndexClasses(*list);
