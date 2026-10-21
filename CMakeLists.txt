@@ -48,8 +48,10 @@ set(IMAGINATORSRECOMP_SOURCES
     src/game/kernel_stubs.cpp
     src/game/magic_moment_watch.cpp
     src/game/game_fonts.cpp
+    src/game/game_data.cpp
     src/game/hats.cpp
     src/game/toy_images.cpp
+    src/game/toy_upgrades.cpp
     src/hooks/frame_rate_hook.cpp
     src/hooks/fxaa_scale_hook.cpp
     src/hooks/intro_skip_hook.cpp

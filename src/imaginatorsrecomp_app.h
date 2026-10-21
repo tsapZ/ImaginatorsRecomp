@@ -30,6 +30,7 @@
 #include "game/magic_moment_watch.h"
 #include "game/hats.h"
 #include "game/toy_images.h"
+#include "game/toy_upgrades.h"
 #include "dev/gpu_diagnostics.h"
 #include "localization.h"
 #include "portal_rex/achievements_ui.h"
@@ -152,6 +153,7 @@ class ImaginatorsrecompApp : public rex::ReXApp {
     // toy, each figure's own variant where the game has one.
     imaginatorsrecomp::InstallToyImages(game_data_root_);
     imaginatorsrecomp::InstallHats(game_data_root_);
+    imaginatorsrecomp::InstallToyUpgrades(game_data_root_);
     // The portal menu opens by itself when the game asks for a Skylander.
     imaginatorsrecomp::StartMagicMomentWatch(runtime()->memory());
     // Items go on and off the portal only once the player's Skylander is back in the game.
