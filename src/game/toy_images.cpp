@@ -54,6 +54,8 @@
 
 #include "toy_images.h"
 
+#include "hats.h"
+
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -567,6 +569,7 @@ void InstallToyImages(const std::filesystem::path& rom_dir) {
       [](uint16_t id, uint16_t variant) { return Lookup(id, variant); });
   skylanders::SetFigureTraitProvider([](uint16_t id, uint16_t) { return Trait(id); });
   skylanders::SetArtImageProvider([](const std::string& key) -> std::shared_ptr<const FigureImage> {
+    if (auto hat = HatPicture(key)) return hat;  // "hat:<number>" (hats.cpp)
     std::lock_guard<std::mutex> lock(g_mutex);
     return g_ready ? Icon(key) : nullptr;
   });
