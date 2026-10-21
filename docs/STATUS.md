@@ -10,10 +10,10 @@ Updated at the end of every session. Only record what a build actually did.
 | Game data | disc extracted into `rom/` (5287 files), `default.xex` hash pinned |
 | SDK | our fork `tsapZ/rexglue-sdk`, branch `skylanders`, shared with the other games |
 | Codegen | works with 30 `config/default.toml` entries (function starts the analyzer put one instruction late) and one hook (the movie skip) |
-| Boot | ✅ the Activision and Toys for Bob logos (skipped by default, `skip_intro`), the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips; `skip_opening_movie` skips it, off by default) |
+| Boot | ✅ the Activision and Toys for Bob logos (skipped by default, `skip_intro`), the title screen ("Pulsa START", version 1.0.0), the licence agreement (48 pages in Spanish, 52 in German, accepted with **Y**), the save slots, the difficulty, a new game's opening cutscene (Y skips; `skip_opening_movie` skips it, off by default) |
 | In-game | ✅ the first level with a figure on the emulated portal: Spyro (a Spyro's Adventure figure) in the jungle with the HUD (portrait, health bar), checked by script |
 | Portal menu | ✅ opens with Guide; shows the game's own collection icons for every toy, each figure's variant where the game has one; opens by itself when the game asks for a Skylander, the portal check on the "too many" screens |
-| Languages | this disc has **Spanish and Italian only**; German text (menus, texts, subtitles) from the owner's PS3 disc with tools/german_text.py, voices stay Spanish; German and English are on the owner's PS3 disc: docs/game/imaginators.md |
+| Languages | this disc has **Spanish and Italian only**; German text (menus, texts, subtitles, the title screen, the licence) from the owner's PS3 disc with tools/german_text.py, German voices experimental (`--voices`); German and English are on the owner's PS3 disc: docs/game/imaginators.md |
 
 ## 2026-10-21: session log
 
@@ -58,3 +58,11 @@ Updated at the end of every session. Only record what a build actually did.
   movies are recognised by their header's size and frame count, unique among the disc's 133.
   Checked by script: the title screen 8 s after the start, all three skipped and the game goes on
   to the portal prompt.
+- **The last Spanish texts German** (tools/german_text.py): the licence agreement is on the 360
+  disc in German already (softwareLicense.pak, licenseAgreement_de.igz), so its Spanish entry now
+  points there; the 360's own platform strings (xenonPlatformStrings_es.lng: "Pulsa START",
+  "Nueva partida", the Xbox Live messages) get a German copy, built by key from the PS3 disc's PS3
+  and PC platform strings where their Spanish matches the 360's (273 of 282) and 9 texts written
+  for the tool. The .lng writer reproduces the game's files byte for byte; `--restore` now undoes
+  several steps on one archive. Checked by script: "Drücke START", the licence in German,
+  "Neues Spiel" and "Lizenz" on the save slots. Applied to this machine's rom/.

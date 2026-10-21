@@ -51,6 +51,18 @@ cutscene hint ("Drücke Y zum Überspringen"), the portal prompt ("Bitte platzie
 Skylander ...") and the figure intro come up in German. The licence's text is Spanish still
 (not in these files). The voices stay Spanish.
 
+**The rest of the text, the same day:** the licence agreement is in softwareLicense.pak as
+`license/licenseAgreement_<language>.igz`, and the 360 disc has all eleven languages there,
+German included; the tool points the Spanish entry at the German file. The 360's platform strings
+have the same keys as the PS3 disc's `ps3PlatformStrings` and `pcPlatformStrings`
+(`CGlobalPlatformStrings::_titleScreenPressStartString` and so on, one igLocalizedStringData
+object per key); the tool writes a German copy of the 360 file: the PS3 file's German where the
+two discs' Spanish agree (257 of 282), the PC file's where those agree (16), and 9 texts written
+for the tool (Xbox Live, the gamertag, "Drücke START"). The texts are the file's last section;
+rewriting it unchanged gives the original file byte for byte. Checked by script: "Drücke START",
+the licence's 52 German pages, "Neues Spiel" / "Lizenz" on the save slots. The voices are in
+`--voices` (experimental).
+
 What it means:
 
 - **For this port:** German can come from the owner's PS3 files at run time (an overlay folder the

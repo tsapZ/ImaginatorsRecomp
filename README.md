@@ -29,8 +29,9 @@ a decoder for; not yet heard in the game).
     python tools/german_text.py --restore        (back to the disc's Spanish)
 
 It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3
-and about 2.3 GB of free space while it runs; it takes well under a minute. A few texts of the
-Xbox 360 version itself ("Pulsa START", "Nueva partida") and the licence text stay Spanish.
+and about 2.3 GB of free space while it runs; it takes well under a minute. The title screen,
+the licence agreement and the Xbox 360's own messages become German too. Run it again after an
+update of the tool: it only does what is not done yet.
 
 ## Building
 

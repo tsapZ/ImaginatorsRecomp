@@ -15,6 +15,6 @@ Imaginators Recompiled, the sixth Skylanders game, built the same way as the oth
 
 | When | What | Who |
 |---|---|---|
-| **Now** | The last Spanish texts (the 360's platform strings, the licence text) | me |
-| Next | More levels and saves (Phase 2) | me |
+| **Now** | More levels and saves (Phase 2) | me |
+| Next | High frame rate and resolution (Phase 3) | me |
 | Later | The game's own pictures and names (its archive format) | me |
