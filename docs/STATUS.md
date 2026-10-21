@@ -83,3 +83,17 @@ Updated at the end of every session. Only record what a build actually did.
   widens the aspect and the FOV there, keeping the vertical FOV; the app turns the letterbox off.
   Checked by script: the first level in a 2560x1080 window: Spyro and the stones in their
   proportions, more of the jungle at both sides; the HUD stretched.
+- **The portal menu's pictures the right way up and sharper** (src/game/toy_images.cpp): the
+  collection icons are stored upside down, which the menu showed (the owner saw it, 2026-10-21; the
+  code's comment had called them upright). They are flipped when read. The disc has only 88x88 of
+  each figure (the HUD portraits, ui/HealthHud_2015/Portraits, are the same size), shown about twice
+  as large, so the first time the menu asks for an icon it is enlarged 2x with a Lanczos-3 filter
+  (on premultiplied alpha) and kept. Checked by script: Double Trouble and the magic items upright
+  and crisper.
+- **60 FPS and more** (src/hooks/frame_rate_hook.cpp, `present_interval`, F4 > Bildrate, off by
+  default): the game swaps with presentation interval 2 like Swap Force (30.0 FPS with
+  frame_rate_limit 60, 72.0 with 144); Swap Force's hook on the D3D library's swap (0x8287A750,
+  found by its instructions) sets 1. With it, 144.0 FPS with frame_rate_limit 144 in the first
+  level, and the game keeps its speed: the magic moment's states around a figure's arrival last as
+  long as at 30 FPS (the figure's intro 5.36 against 5.42 s). The magic moment watch logs its state
+  changes at info level now (a few lines per figure change), which is how the speed was timed.
