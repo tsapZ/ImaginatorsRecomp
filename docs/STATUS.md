@@ -158,3 +158,11 @@ launcher's achievements screen.
   of its parameter setter (`sub_82899870`, 0x82899870), the same function as SuperChargers'.
   Checked in the first level, Spyro running with the camera turning: the picture's mean gradient
   3.53 at 0, 3.29 at the game's 1, 3.14 at 2 (the leaves visibly softer), and equal while standing.
+- **Skylander-Vorstellung: Kurz (F4 > Spiel), as in Swap Force (SwapForceRecomp #60):** the
+  figure's intro after the placement ends after 1.5 s. The intro's time check (`sub_829FF1F0`,
+  0x829FF268) alone doesn't end it: the magic moment's update in state 2 (`sub_82A4BC28`) waits
+  for the figure's intro animation (`sub_82D90538`) and then sets the state (+68) to 4; a write
+  watch on the state found that, as in SuperChargers. The hooks shorten the time and, once the
+  intro ran 1.5 s, answer "over" for the animation (0x82A4C114, 0x82A4BE58), so the game's own
+  ending runs. Checked in the first level with Spyro placed, a screenshot a second: the name
+  shows for one picture instead of four and the game starts about 2 s earlier.
