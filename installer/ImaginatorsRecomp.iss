@@ -3,7 +3,9 @@
 #define MyAppExeName "imaginatorsrecompiled.exe"
 
 [Setup]
-AppId={{C3E00C3F-6CE0-4100-BD9B-13F9B4A8CCBA}
+; Each game its own AppId: Windows keeps one uninstall entry per AppId and Inno Setup finds a
+; previous install by it, so a shared one made the games' setups take each other's folder.
+AppId={{3D80E212-E302-4422-9B7B-6AFAF712400E}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 DefaultDirName={localappdata}\Programs\{#MyAppName}
