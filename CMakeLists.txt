@@ -108,6 +108,8 @@ target_include_directories(imaginatorsrecomp_verify PRIVATE "${REXSDK_DIR}/third
 target_sources(imaginatorsrecomp_verify PRIVATE "${REXSDK_DIR}/thirdparty/crypto/sha256.cpp")
 
 target_link_libraries(imaginatorsrecompiled PRIVATE imaginatorsrecomp_verify skylanders_portal_rex)
+# The exe's icon: the game's logo from the owner's disc (rom/nxeart), made at build time (#6).
+skylanders_game_icon(imaginatorsrecompiled "${CMAKE_CURRENT_SOURCE_DIR}/rom")
 target_compile_definitions(imaginatorsrecompiled PRIVATE IMAGINATORSRECOMP_XEX_SHA256="${IMAGINATORSRECOMP_XEX_SHA256}")
 
 enable_testing()
