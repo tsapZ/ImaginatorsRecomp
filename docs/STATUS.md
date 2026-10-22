@@ -152,4 +152,9 @@ launcher's achievements screen.
   (`sub_82A92408`, 0x82A94FC0) and after the per-zone blend (`sub_82A94FC8`, 0x82A95A18;
   `src/hooks/post_effects_hook.cpp`). Checked in the first level: the hook runs every frame, and
   a low cutoff set through it made the scene glow; with the level's cutoff of 5 the setting shows
-  most in bright scenes. Motion blur as in SuperChargers: not yet (#3).
+  most in bright scenes.
+- **Motion blur (F4 > Grafik > Bewegungsunschärfe), as in Swap Force and SuperChargers, off by
+  default:** the motion blur material's `ig_motion_blur_exposure_params` (+96), scaled at the start
+  of its parameter setter (`sub_82899870`, 0x82899870), the same function as SuperChargers'.
+  Checked in the first level, Spyro running with the camera turning: the picture's mean gradient
+  3.53 at 0, 3.29 at the game's 1, 3.14 at 2 (the leaves visibly softer), and equal while standing.
