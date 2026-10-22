@@ -166,3 +166,7 @@ launcher's achievements screen.
   intro ran 1.5 s, answer "over" for the animation (0x82A4C114, 0x82A4BE58), so the game's own
   ending runs. Checked in the first level with Spyro placed, a screenshot a second: the name
   shows for one picture instead of four and the game starts about 2 s earlier.
+- **Nothing skipped by default** (the owner's choice, 2026-10-22): `skip_intro` is off, the logo
+  movies play as on the console (the option skips them); the settings templates say so too. The
+  16x texture filter now comes from skylanders-portal (`ApplyGraphicsDefaults`), so the Core of
+  Light launcher shows 16x as the game uses it.
