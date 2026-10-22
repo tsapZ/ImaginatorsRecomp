@@ -147,3 +147,9 @@ Updated at the end of every session. Only record what a build actually did.
 - **Figure pictures for the launcher** (skylanders-portal e87feb3): while the game runs, every figure picture it reads from the disc goes into `Documents\Skylanders\Pictures\<game>` once, for the launcher's figure library; later the same night (skylanders-portal 7f6a34a) also the hats it knows (hats.txt, their pictures) and the upgrade trees of the figures in the figure folder; and
 (skylanders-portal ca65339) the game's achievement list with the title's own pictures, for the
 launcher's achievements screen.
+- **Bloom strength (F4 > Grafik > Leuchten (Bloom)), as in Swap Force and SuperChargers:** the
+  same environment class (`_bloomScale` at +0x3A4), the hooks at the end of its zone blend
+  (`sub_82A92408`, 0x82A94FC0) and after the per-zone blend (`sub_82A94FC8`, 0x82A95A18;
+  `src/hooks/post_effects_hook.cpp`). Checked in the first level: the hook runs every frame, and
+  a low cutoff set through it made the scene glow; with the level's cutoff of 5 the setting shows
+  most in bright scenes. Motion blur as in SuperChargers: not yet (#3).

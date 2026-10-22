@@ -104,6 +104,30 @@ address = 0x8289D9F8
 name = "FxaaFrameSizeHook"
 registers = ["f1", "f2"]
 
+# 0x82A94FC0 is the last instruction of sub_82A92408 before its exit (loc_82A94FC4, which the
+# early exit without blending jumps to as well). sub_82A92408 blends the level's environment
+# settings (reflection field names at 0x820790B0, their offsets at 0x82079770) from the zone
+# objects into the one at +2456 of its this, every field computed afresh from the sources; the
+# instruction stores into that object through r11. _bloomScale is at +0x3A4. Found as
+# SuperChargers' sub_82BD0C30 (the same lerps of the field) with the same field tables.
+# src/hooks/post_effects_hook.cpp scales the blended _bloomScale by bloom_strength; it changes only
+# that field of the result, after the function wrote it, and does nothing at 1.
+[[midasm_hook]]
+address = 0x82A94FC0
+name = "BloomStrengthHook"
+registers = ["r11"]
+
+# 0x82A95A18 is where sub_82A94FC8's two paths join after the per-zone blend of _bloomScale
+# (+0x3A4: the result at +2456 of r3 moved towards the zone r4's value by the weight at +2496,
+# when the zone sets _blendAll (+110) or the field's state (+52)). Found next to the hook
+# above: sub_82A94FC8 is the game's other blend of the environment fields. post_effects_hook.cpp adds
+# the zone's share of the bloom_strength scale, so a zone with its own bloom keeps the setting;
+# it reads r3 / r4 and writes only that field, and does nothing at 1.
+[[midasm_hook]]
+address = 0x82A95A18
+name = "BloomStrengthZoneHook"
+registers = ["r3", "r4"]
+
 [functions]
 # Function starts the analyzer put one instruction late. The first boot ended with "Call to invalid
 # or unregistered function at guest address 0x82562CB8":
