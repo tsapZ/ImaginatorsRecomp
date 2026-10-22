@@ -45,6 +45,11 @@
 //     GuiStandard_diffuse,textures@!ui!CRM!SI_CRM_<Class>Class`tga,101.igz" in CRM.pak (344x308,
 //     stored upside down like the others), and the name the game's German text for the class
 //     (CYOSClassDataList's text: Ritter, Ninja, Panzerbrecher, ...).
+//   - A creation crystal's battle class: chosen when its Imaginator is made and kept on the figure
+//     (skylanders-portal FigureStats::creation_class, the game's own number), so it comes from
+//     the owner's file of the crystal (SetFigureStatsTraitProvider), with the same symbol and name
+//     as a sensei of that class. The numbers were matched to the classes 2026-10-22 on 54 premade
+//     crystals named by their class (kCrystalClasses).
 //   - A vehicle's terrain: CVehicleToyData +0x34, 1 land, 2 sky, 3 sea (this game's
 //     TemplateLandVehicle / TemplateAirVehicle / TemplateSeaVehicle have 1 / 2 / 3, four bytes
 //     later than in SuperChargers; read 2026-10-21 from all 36 vehicles). The symbols are the
@@ -78,6 +83,7 @@
 #include "game/alchemy/iga_archive.h"
 #include "game/alchemy/igz_file.h"
 #include "portal_rex/menu_draw.h"
+#include "portal/figure_catalog.h"
 #include "portal_rex/portal_menu.h"
 
 namespace imaginatorsrecomp {
@@ -164,6 +170,12 @@ constexpr BattleClass kClasses[] = {
     {"Archer", "Bowslinger", "Bogenk\xC3\xA4" "mpfer", "Bowslinger"},
     {"Club", "Smasher", "Schmetterer", "Smasher"},
 };
+
+// A creation crystal's class number as the figure keeps it -> its kClasses entry (0 Knight,
+// 1 Swashbuckler, 2 Brawler, 3 Sentinel, 5 Quickshot, 6 Bowslinger, 7 Bazooker, 8 Sorcerer,
+// 10 Smasher, 11 Ninja; 4 and 9 weren't among the crystals).
+constexpr std::pair<uint8_t, size_t> kCrystalClasses[] = {{0, 0}, {1, 7}, {2, 5}, {3, 6}, {5, 3},
+                                                          {6, 8}, {7, 2}, {8, 4}, {10, 9}, {11, 1}};
 
 constexpr uint16_t kSeries2 = 0x800;
 constexpr uint16_t kAlternateDeco = 0x400;
@@ -560,6 +572,20 @@ std::optional<skylanders::FigureTrait> Trait(uint16_t id) {
   }
 }
 
+// A creation crystal's class, from the owner's file of it.
+std::optional<skylanders::FigureTrait> CrystalTrait(uint16_t id, uint16_t variant,
+                                                   const skylanders::portal::FigureStats& stats) {
+  const skylanders::portal::SkylanderInfo* sky = skylanders::portal::FindSkylander(id, variant);
+  if (!sky || sky->category != "Creation Crystals" || !stats.creation_class) return std::nullopt;
+  for (const auto& [number, index] : kCrystalClasses) {
+    if (number != *stats.creation_class) continue;
+    const BattleClass& c = kClasses[index];
+    const bool german = skylanders::menu_draw::GermanText();
+    return skylanders::FigureTrait{"class:" + std::string(c.picture), german ? c.german : c.english};
+  }
+  return std::nullopt;
+}
+
 std::shared_ptr<const FigureImage> Lookup(uint16_t id, uint16_t variant) {
   std::lock_guard<std::mutex> lock(g_mutex);
   if (!g_ready) return nullptr;
@@ -585,6 +611,7 @@ void InstallToyImages(const std::filesystem::path& rom_dir) {
   skylanders::SetFigureImageProvider(
       [](uint16_t id, uint16_t variant) { return Lookup(id, variant); });
   skylanders::SetFigureTraitProvider([](uint16_t id, uint16_t) { return Trait(id); });
+  skylanders::SetFigureStatsTraitProvider(CrystalTrait);
   skylanders::SetArtImageProvider([](const std::string& key) -> std::shared_ptr<const FigureImage> {
     if (auto hat = HatPicture(key)) return hat;  // "hat:<number>" (hats.cpp)
     if (key.starts_with("upgrade:")) return UpgradeImage(key);  // toy_upgrades.cpp
