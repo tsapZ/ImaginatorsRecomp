@@ -14,8 +14,9 @@ See [docs/STATUS.md](docs/STATUS.md) and [docs/roadmap.md](docs/roadmap.md).
 | Build | ✅ codegen and build |
 | Boot | ✅ title, licence agreement (accept with Y), save slots, difficulty, opening cutscene |
 | First level | ✅ with a figure on the emulated portal (by script) |
-| Portal menu | ✅ opens by itself at the game's prompt, with the game's collection icons |
-| Portal | ⬜ (the portal code is in, not tried with this game) |
+| Portal menu | ✅ opens by itself at the game's prompt, with the game's collection icons, hats, upgrade trees and the creation crystals' class |
+| Portal | ✅ emulated portal (by script); a real USB portal not tried with this game |
+| Settings | ✅ F4 menu like the other games': native 3D picture, the game's FXAA at the internal resolution, bloom and motion blur strength, ultrawide with the HUD at the edges, the controller picture, the shorter Skylander intro |
 
 ## German text from your PS3 disc
 
