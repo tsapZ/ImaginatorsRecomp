@@ -98,7 +98,7 @@ Updated at the end of every session. Only record what a build actually did.
   long as at 30 FPS (the figure's intro 5.36 against 5.42 s). The magic moment watch logs its state
   changes at info level now (a few lines per figure change), which is how the speed was timed.
 - **The menus in the game's own fonts** (src/game/game_fonts.cpp from SuperChargersRecomp,
-  skylanders-portal b804d9c, SwapForceRecomp #54): fonts/ProximaNova-Title.igz (permanent.pak, 93
+  skylanders-portal 465b4c1, SwapForceRecomp #54): fonts/ProximaNova-Title.igz (permanent.pak, 93
   glyphs, the rounded title letters of the game's own prompts; a 1024x1024 page with a second mip
   level) and fonts/ProximaNova-Body.igz (essentialui.pak, 172 glyphs with ä ö ü ß). The portal
   library draws the menus' titles and text with them, Segoe UI filling in missing glyphs. Checked
@@ -133,19 +133,19 @@ Updated at the end of every session. Only record what a build actually did.
 
 ## 2026-10-22: session log (night)
 
-- **Senseis' battle classes and vehicles' terrain** (589914b): the game's class table LooseData/CYOSClassDataList.igz in JuiceDomain_FrontEnd.pak (ten classes, 30 senseis; Kaos has a class of his own without a symbol), the medallions cut out of the sensei shrine pictures in CRM.pak, the German class names from the game's text (Ritter, Bogenkämpfer, Zauberer, ...); the terrain at CVehicleToyData +0x34 with the blueprint screen's colour symbols from E3PressStart.pak. Checked: Buckshot "Bogenkämpfer", Mysticat a sorcerer, Pain-Yatta a smasher, Soda Skimmer the sea symbol.
+- **Senseis' battle classes and vehicles' terrain** (79c87b6): the game's class table LooseData/CYOSClassDataList.igz in JuiceDomain_FrontEnd.pak (ten classes, 30 senseis; Kaos has a class of his own without a symbol), the medallions cut out of the sensei shrine pictures in CRM.pak, the German class names from the game's text (Ritter, Bogenkämpfer, Zauberer, ...); the terrain at CVehicleToyData +0x34 with the blueprint screen's colour symbols from E3PressStart.pak. Checked: Buckshot "Bogenkämpfer", Mysticat a sorcerer, Pain-Yatta a smasher, Soda Skimmer the sea symbol.
 - **Hats in the details view** (src/game/hats.cpp, the same code as SuperChargers' with this disc's offsets: number at +0x9C, attributes +0x98, icon +0x10): 266 hats, 32 attribute names; only three hats have a picture on this disc (the game shows hats as 3D models), the others get a plain hat symbol.
 - **Upgrades in the details view** (src/game/toy_upgrades.cpp, shared with SuperChargers; this disc's character data has the same layout, King Pen and Spyro checked). Checked on a copy of a Chop Chop: the whole tree with the pictures, German texts and prices. A sensei's Sky-Chi is shown as the Soul Gem path's second upgrade.
-- **Portal library** (cbc71c6, 0eb2564): German card subtitles in the singular ("Sensei", "Schurken-Sensei", "Kreationskristall"); the hat symbol.
+- **Portal library** (83cc22e, 141d32e): German card subtitles in the singular ("Sensei", "Schurken-Sensei", "Kreationskristall"); the hat symbol.
 - **New issues:** #3 bloom and motion blur options, #4 a creation crystal's class, #5 the game's controller picture (on the disc: Controller_SchemeXenon.pak).
 
 ## 2026-10-22: later the same night
 
 - The settings example and the installer's template set skip_intro twice (an invalid file); fixed, and the example says 60 FPS.
-- **Settings file read even with a repeated key** (SDK fork 96273bb): a key set twice in a table makes the whole TOML file invalid, and the game then ignored every setting in it without a visible error (the error went to a log that didn't exist yet). The SDK now reads such a file with the repeats left out and logs which key was repeated.
-- **`--settings_schema=<file>`** (skylanders-portal 25dec20): the game writes its F4 menu's pages with their values and quits before a window opens; the Core of Light launcher shows them as the game's settings and writes into this game's settings file.
-- **Figure pictures for the launcher** (skylanders-portal e87feb3): while the game runs, every figure picture it reads from the disc goes into `Documents\Skylanders\Pictures\<game>` once, for the launcher's figure library; later the same night (skylanders-portal 7f6a34a) also the hats it knows (hats.txt, their pictures) and the upgrade trees of the figures in the figure folder; and
-(skylanders-portal ca65339) the game's achievement list with the title's own pictures, for the
+- **Settings file read even with a repeated key** (SDK fork 8761248): a key set twice in a table makes the whole TOML file invalid, and the game then ignored every setting in it without a visible error (the error went to a log that didn't exist yet). The SDK now reads such a file with the repeats left out and logs which key was repeated.
+- **`--settings_schema=<file>`** (skylanders-portal 4521ced): the game writes its F4 menu's pages with their values and quits before a window opens; the Core of Light launcher shows them as the game's settings and writes into this game's settings file.
+- **Figure pictures for the launcher** (skylanders-portal e17786b): while the game runs, every figure picture it reads from the disc goes into `Documents\Skylanders\Pictures\<game>` once, for the launcher's figure library; later the same night (skylanders-portal 6c3c6a3) also the hats it knows (hats.txt, their pictures) and the upgrade trees of the figures in the figure folder; and
+(skylanders-portal f571d26) the game's achievement list with the title's own pictures, for the
 launcher's achievements screen.
 - **Bloom strength (F4 > Grafik > Leuchten (Bloom)), as in Swap Force and SuperChargers:** the
   same environment class (`_bloomScale` at +0x3A4), the hooks at the end of its zone blend
@@ -173,8 +173,8 @@ launcher's achievements screen.
 
 ## 2026-10-23: session log (night)
 
-- **Title music from the disc** for the Core of Light launcher (skylanders-portal 7bd504a,
-  rexglue-sdk 1e74678): `--export_title_music=<file.wav>` decodes the track the title screen
+- **Title music from the disc** for the Core of Light launcher (skylanders-portal 6e5c284,
+  rexglue-sdk 63e87be): `--export_title_music=<file.wav>` decodes the track the title screen
   streams (found with a run logging the game's file reads) from XMA2 with the SDK's FFmpeg and
   quits before a window opens, in under a second; each normal start leaves `title_music.wav` in
   the game's picture folder once. Checked: mu_main_menu_2016_apm_heroes_all of archives/INTER_Streamed_bank.pak (43.9 s); identical to FFmpeg 8.1's own decode of the
@@ -183,10 +183,10 @@ launcher's achievements screen.
   starten" (both ask, "Nein" first; restart not offered when the launcher started the game; the
   new instance waits for the old one), the player menu is a row on the Portal page, the settings
   menu's buttons have no "Aus" any more (it locked a pad out), "Alle Einstellungen" says it is for
-  keyboard and mouse (skylanders-portal 60e8eeb).
-- **HD texture packs:** rexglue-sdk f02a4b5 dumps the game's BC1-BC3 textures
+  keyboard and mouse (skylanders-portal 5fff7aa).
+- **HD texture packs:** rexglue-sdk 37d3e77 dumps the game's BC1-BC3 textures
   (`texture_dump_dir`) and loads `<hash>.dds` replacements of any size (`texture_replace_dir`);
-  a pack in `Documents\Skylanders\Textures\Imaginators` is used by itself (skylanders-portal ebb5e85).
+  a pack in `Documents\Skylanders\Textures\Imaginators` is used by itself (skylanders-portal 94175f0).
   Checked in Swap Force's hub (see SwapForceRecomp docs/texture-packs.md, #62).
 - **F4 > Grafik:** "Schärfe-Stärke" (CAS's additional sharpness) and "Farbverläufe glätten
   (Dithering)", dithering on by default.
@@ -211,7 +211,7 @@ launcher's achievements screen.
 
 ## 2026-10-23: session log (day)
 
-- **This game's toys only with a file of them** (skylanders-portal 0918cb8): senseis, creation
+- **This game's toys only with a file of them** (skylanders-portal 3844b6f): senseis, creation
   crystals and Mystery Chests carry a 32-byte Ed25519 signature in sector 0 (blocks 2 and 4) that
   the game checks (TweetNaCl in the game, see docs/portal.md); a blank one the menu made was
   "damaged". The menu now lists them only when there is a file (e.g. from the real portal in
@@ -219,4 +219,4 @@ launcher's achievements screen.
   Bronze Mystery Chest opens and gives its parts (Ohrenwärmer, Doomlander-Barbaren-Beine); blank
   Air Strike, blank crystal, blank chest and a real Air Strike with zeroed blocks 2 and 4 are all
   "damaged".
-- **Swapper builder** as picture grids, LB / RB on a recent swapper (skylanders-portal 12905c0).
+- **Swapper builder** as picture grids, LB / RB on a recent swapper (skylanders-portal b2e7d07).
