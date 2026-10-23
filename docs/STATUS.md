@@ -220,3 +220,13 @@ launcher's achievements screen.
   Air Strike, blank crystal, blank chest and a real Air Strike with zeroed blocks 2 and 4 are all
   "damaged".
 - **Swapper builder** as picture grids, LB / RB on a recent swapper (skylanders-portal b2e7d07).
+
+## 2026-10-24: 0.1.0-beta.7 (a colleague's evening on SteamOS)
+
+- **Ultrawide by itself in fullscreen** (skylanders-portal bd1b318): the ultrawide camera and the
+  presenter take the aspect from `resolution`, so "Fenstergröße: Automatisch" stayed 16:9 on a
+  21:9 screen. `ResolutionFromScreenIfAutomatic`, first thing in OnPreSetup, sets it for the start
+  to the primary screen's mode (nothing written; not for the launcher's schema).
+- **Window sizes** add 2560x1080 and 3440x1440 (21:9), 3840x1600 (24:10) and 5120x1440 (32:9).
+- **"Tastatur spielt als"** is greyed and can't be changed while "Tastatur und Maus" is off
+  (skylanders-portal 10a00cd, `enabled_by`, also in the schema for Core of Light).
