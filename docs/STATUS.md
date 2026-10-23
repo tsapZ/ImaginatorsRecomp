@@ -208,3 +208,15 @@ launcher's achievements screen.
   the jump component's bounce pad fields at about 155 FPS: without the fix a launch at 5000 and one
   at 8000 each ended with the player put back after 3 s; with it never (normal jumps 0.06-0.35 s
   counted as stuck instead of 0.43-0.45 s).
+
+## 2026-10-23: session log (day)
+
+- **This game's toys only with a file of them** (skylanders-portal 0918cb8): senseis, creation
+  crystals and Mystery Chests carry a 32-byte Ed25519 signature in sector 0 (blocks 2 and 4) that
+  the game checks (TweetNaCl in the game, see docs/portal.md); a blank one the menu made was
+  "damaged". The menu now lists them only when there is a file (e.g. from the real portal in
+  hybrid mode). Checked: with one Air Strike file the Imaginators tab shows only Air Strike; a real
+  Bronze Mystery Chest opens and gives its parts (Ohrenwärmer, Doomlander-Barbaren-Beine); blank
+  Air Strike, blank crystal, blank chest and a real Air Strike with zeroed blocks 2 and 4 are all
+  "damaged".
+- **Swapper builder** as picture grids, LB / RB on a recent swapper (skylanders-portal 12905c0).

@@ -19,6 +19,20 @@ what is particular to Imaginators.
 
 The portal menu lists the figures of every game (Spyro's Adventure to Imaginators) (`portal_menu_games`).
 
+**Imaginators' own toys only with a file of them.** Senseis, creation crystals, Mystery Chests
+and the rest of this game's toys carry 32 bytes in sector 0 (blocks 2 and 4), different on every
+toy, that the game checks; the earlier games' figures have zeros there. A blank figure the menu
+would make, or a real dump with those two blocks zeroed, is "damaged" (the portal error with
+reason 0; tried with Air Strike, a Water crystal and a Bronze Mystery Chest, 2026-10-23). The check
+is a public-key signature: the game carries TweetNaCl's Ed25519 (the curve constant d at
+0x82203680, SHA-512's round constants at 0x82203900 and initial values at 0x82203B80, found with the
+input script's `scan`; the field arithmetic `sub_831FBFB0`, TweetNaCl's pack25519, was on the call
+chain when the copied 32 bytes at 0x7081F3F0 were read after placing Air Strike). Only the holder
+of the private key can make a toy that passes, so the menu lists this game's toys only when there
+is a file of them, e.g. read from the real portal in `hybrid` mode (all 64 blocks, sector 0
+included); figures of the five earlier games it still makes. A Mystery Chest gives its loot once
+per chest and save: the save remembers the chest's UID.
+
 ## Figures
 
 `Documents\Skylanders\Figures`, one folder for every game (portal fork `SharedFiguresDir`), with a
