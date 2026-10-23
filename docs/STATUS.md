@@ -201,3 +201,10 @@ launcher's achievements screen.
   (ToyData/<Name>_ToyData_de.lng, else _es; "Kampfhammer", "Schicksalshand", "Sonnenkratzer
   (LightCore)"). The German disc keeps the Skylanders' and vehicles' English names, so those stay.
   Checked by script in F6 > Magische Objekte (91 names).
+- **Long falls fixed (`fix_stuck_falling`, on), as in Swap Force and SuperChargers:** the player's
+  jump component (sub_82EEB308) counts a fall as stuck when the player moved less than 20 units
+  (or the component's own override) since the last frame, and after 3 s of that puts the player
+  back; 20 per frame was tuned for 30 FPS. Measured in the first level, the player launched with
+  the jump component's bounce pad fields at about 155 FPS: without the fix a launch at 5000 and one
+  at 8000 each ended with the player put back after 3 s; with it never (normal jumps 0.06-0.35 s
+  counted as stuck instead of 0.43-0.45 s).
