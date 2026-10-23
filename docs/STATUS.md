@@ -196,3 +196,8 @@ launcher's achievements screen.
 - No "Figuren späterer Spiele" row (there is no later game).
 - The installer from the Es/It ISO gives a Spanish game ("Pulsa START"); German needs the
   German-patched ISO (tools/german_text.py), as before.
+- **German names of the magic items and traps** in the portal menu (it showed the catalog's
+  English ones): from the toys' own text files next to their toy data
+  (ToyData/<Name>_ToyData_de.lng, else _es; "Kampfhammer", "Schicksalshand", "Sonnenkratzer
+  (LightCore)"). The German disc keeps the Skylanders' and vehicles' English names, so those stay.
+  Checked by script in F6 > Magische Objekte (91 names).
