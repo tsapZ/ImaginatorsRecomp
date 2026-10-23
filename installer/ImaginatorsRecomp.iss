@@ -1,5 +1,5 @@
 #define MyAppName "Imaginators Recompiled"
-#define MyAppVersion "0.1.0-beta.3"
+#define MyAppVersion "0.1.0-beta.4"
 #define MyAppExeName "imaginatorsrecompiled.exe"
 
 [Setup]
