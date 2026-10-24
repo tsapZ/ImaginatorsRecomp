@@ -119,7 +119,7 @@ update of the tool: it only does what is not done yet.
   and run `just play-release`.
 
 Your figures are `.dump` files in `Documents\Skylanders\Figures`, shared by every game, like real
-figures next to the portal. The saves are in `Documents\imaginatorsrecomp`, the settings file next to the
+figures next to the portal. The saves are in `Documents\Skylanders\Imaginators` (the first start copies them there from the old `Documents\imaginatorsrecomp`), the settings file next to the
 game's exe.
 
 ## Reporting a problem

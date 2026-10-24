@@ -291,6 +291,10 @@ class ImaginatorsrecompApp : public rex::ReXApp {
   }
 
   void OnConfigurePaths(rex::PathConfig& paths) override {
+    // One data folder for every game (the owner's call, 2026-10-24): "Imaginators" in
+    // Documents\Skylanders or in the folder picked in Core of Light. The game's old folder
+    // (Documents\imaginatorsrecomp) is copied there once.
+    skylanders::UseSharedDataFolder(paths.user_data_root, paths.cache_root, "Imaginators");
     // game_data_root is read from the cvar registry before the config file loads (see
     // ReXApp::SetupEnvironment), so --game_data_root can't be set via imaginatorsrecomp.toml the way
     // portal_mode etc. can. Defaulting to "rom" (relative to the working directory, matching every
