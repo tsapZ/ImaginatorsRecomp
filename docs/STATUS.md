@@ -298,3 +298,14 @@ launcher's achievements screen.
   real controller), skylanders-portal f2c4940 / 6e96c16; an A press right after the menu opened by
   itself no longer picks a figure (SwapForceRecomp #72); one bad command-line option no longer drops
   the others (rexglue-sdk 605000d).
+
+## 2026-10-25 (morning): the game checks toy files for the launcher
+
+- **`--check_figures=<list>`** (Core of Light #34, `src/game/figure_check.cpp`): the toy parser
+  sub_831F27C0 checks signed toys (id 600-698, or block 1's word at 28 from 0x5000 on) with
+  Ed25519: blocks 2, 4, 34, 62 as R||S over blocks 0 and 1, the key from sub_831FDA90 (byte 63,
+  table at 0x82203CC0), the check sub_831FD948 (TweetNaCl crypto_sign_open, 0 = valid). The option
+  runs those two functions on each listed file once the image is loaded (OnPostLoadXexImage, a
+  guest stack of its own), writes `<list>.result` and quits. Checked: 472 real dumps "ok"; a
+  flipped UID byte and zeroed R "bad signature", a 512-byte file "not 1024 bytes", two Swap Force
+  figures "unsigned"; 5.2 s with the start, the window hidden (`--window_hidden=true`).

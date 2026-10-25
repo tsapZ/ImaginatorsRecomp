@@ -26,6 +26,7 @@
 #include "dev/input_script.h"
 #include "dev/write_watch.h"
 #include "hooks/ultrawide_hook.h"
+#include "game/figure_check.h"
 #include "game/game_fonts.h"
 #include "game/magic_moment_watch.h"
 #include "game/controller_picture.h"
@@ -79,7 +80,10 @@ class ImaginatorsrecompApp : public rex::ReXApp {
 
   // Override virtual hooks for customization:
   // void OnLoadXexImage(std::string& xex_image) override {}
-  // void OnPostLoadXexImage() override {}
+
+  // For the launcher: which toy files the game accepts, checked by its own code once its image is
+  // loaded, then quit (--check_figures, figure_check.h; Core of Light #34).
+  void OnPostLoadXexImage() override { imaginatorsrecomp::CheckFiguresIfRequested(runtime()->memory()); }
 
   // F7: the menus' own achievements list instead of the SDK's overlay; it opens and closes by
   // itself (and from F4 > Spiel > Erfolge with a controller), so nothing is kept here.

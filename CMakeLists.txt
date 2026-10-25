@@ -55,6 +55,7 @@ set(IMAGINATORSRECOMP_SOURCES
     src/game/magic_moment_watch.cpp
     src/game/game_fonts.cpp
     src/game/controller_picture.cpp
+    src/game/figure_check.cpp
     src/game/game_data.cpp
     src/game/hats.cpp
     src/game/toy_images.cpp

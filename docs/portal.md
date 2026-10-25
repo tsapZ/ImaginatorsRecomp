@@ -33,6 +33,13 @@ is a file of them, e.g. read from the real portal in `hybrid` mode (all 64 block
 included); figures of the five earlier games it still makes. A Mystery Chest gives its loot once
 per chest and save: the save remembers the chest's UID.
 
+**The launcher's check** (`--check_figures=<list>`, `src/game/figure_check.cpp`; Core of Light #34):
+the signed bytes are blocks 0 and 1 (UID, toy id, ...), the signature R||S is blocks 2, 4, 34 and
+62, the public key one of the game's own (table at 0x82203CC0, picked by byte 63). With the
+option the game runs exactly that check (its `sub_831FDA90` and `sub_831FD948`) on every file
+named in the list, writes `<list>.result` ("ok", "unsigned" or "bad" with a reason) and quits, in
+about 5 s for 477 files. The launcher imports only what passes; no key leaves the game.
+
 ## Figures
 
 `Documents\Skylanders\Figures`, one folder for every game (portal fork `SharedFiguresDir`), with a
