@@ -270,3 +270,14 @@ launcher's achievements screen.
   follows it again once the keys or the pad move it.
 - **A chosen 4x texture filter stays 4x** (Core of Light #21, a colleague's report and fix;
   skylanders-portal 23be5f2): 4x is the SDK's own default, so it counted as unset and became 16x.
+
+## 2026-10-25 (night): portal requests
+
+- **A Skylander's death opens the menu** (#10): this game has no FirstVehicleSequence state, so
+  its states from IdleOutro on are one lower than SuperChargers' (IdleOutro 7, Error 16): Dead is
+  13. The owner's log of 2026-10-25 had 34 s in 13 until he put another Skylander on by hand.
+- **The vehicle request opens the menu** as in SuperChargers (Idle with no player), on the vehicles
+  by terrain, without lifting the Skylander.
+- **Hats** (#11): the right name for SuperChargers-era hats (number minus 256), and pictures from
+  SuperChargers' picture folder where this disc has none (it has three; the game shows hats as 3D
+  models). Checked: Enigma's "Gold Rusher-Zahnradkappe" and Chop Chop's "Blumenhut" with pictures.
