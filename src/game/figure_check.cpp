@@ -109,7 +109,9 @@ void CheckFiguresIfRequested(rex::memory::Memory* memory) {
   std::ofstream result(U8Path(list + ".result"), std::ios::binary | std::ios::trunc);
   result << out;
   result.close();
-  REXLOG_INFO("Figure check: {} accepted, {} not ({})", ok_count, bad_count, list);
+  // The flag's name in a string of the exe: the launcher looks for it before asking (an older
+  // build would start the whole game instead); the setting's own name isn't stored as text.
+  REXLOG_INFO("check_figures: {} accepted, {} not ({})", ok_count, bad_count, list);
   rex::FlushLogging();
   // Nothing of the game has run: no threads to stop. Without static destructors, as the settings
   // schema's quit does.
