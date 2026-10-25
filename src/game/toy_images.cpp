@@ -109,8 +109,11 @@ using skylanders::FigureImage;
 constexpr char kToyDataArchive[] = "permanent.pak";
 constexpr char kMaterialArchive[] = "ToyCollectionMaterials.pak";
 constexpr std::string_view kToyDataDir = "/ToyData/";
+// Compared without case: the Air creation crystals' file is "CYOS_Air_toyData.igz" (and
+// CYOS_GB's), so they had no picture (ImaginatorsRecomp #14, found 2026-10-25).
 constexpr std::string_view kToyDataSuffix = "_ToyData.igz";
-constexpr std::string_view kToyTextSuffixes[] = {"_ToyData_de.lng", "_ToyData_es.lng"};
+// The text files next to it: its name with ".igz" replaced, in the file's own spelling.
+constexpr std::string_view kToyTextLanguages[] = {"_de.lng", "_es.lng"};
 constexpr char kToyNameField[] = "CToyData::_toyName";
 constexpr char kVariantNameField[] = "CVariantIdentifier::_toyName";
 constexpr std::string_view kMaterialDir = "/materialInstances/ToyCollection/";
@@ -121,17 +124,18 @@ constexpr char kTrackerArchive[] = "CollectibleTrackerIcons.pak";
 constexpr std::string_view kIconPath = "textures@!ui!Collections!ToyInventoryIcons!";
 constexpr std::string_view kSharpSuffix = "`tga,111.igz";
 
-// The menu's symbols (SetArtImageProvider): the HUD's element badges,
-// "textures/GuiStandard_diffuse,textures@!ui!HealthHud_2016!Portraits!Elements!<Element>_HUD`tga,
-// 111.igz" in skystonesSmashPortraits.pak (128x128 DXT5, tiled), and the ability shop's coin,
-// "...textures@!ui!AbilityShop_2015!coin_icon`tga,101.igz" in JuiceDomain_ActionPacks.pak
-// (44x44). Stored upside down like the icons (seen 2026-10-21). This disc has nine of the badges:
-// Air's is in none of its archives under any name (searched 2026-10-21; the other element sets,
-// the blueprints' grey ones, the loading screen's and the action packs', lack it or Light, Dark or
-// Water too), so the menu draws its own Air medallion.
-constexpr char kElementArchive[] = "skystonesSmashPortraits.pak";
-constexpr std::string_view kElementTexture = "textures@!ui!HealthHud_2016!Portraits!Elements!";
-constexpr std::string_view kElementSuffix = "_HUD`tga,111.igz";
+// The menu's symbols (SetArtImageProvider): the game menus' element icons, "textures/
+// GuiStandard_diffuse,textures@!UI_TFB!MenuComponents!ElementIcon_<Element>`tga,101.igz" in
+// juicedomain_permanent.pak (172x172 DXT5, a glossy disc with the element's symbol; the only
+// archive with all ten), and the ability shop's coin, "...textures@!ui!AbilityShop_2015!coin_icon`
+// tga,101.igz" in JuiceDomain_ActionPacks.pak (44x44). Stored upside down like the icons (seen
+// 2026-10-21). Until 2026-10-25 the badges were the Skystones Smash cards' bronze-ring ones
+// (ui!HealthHud_2016!Portraits!Elements!<Element>_HUD in skystonesSmashPortraits.pak), but the
+// disc has only nine of those: a search of every texture by content found no Air one, the Air
+// card uses an enemy portrait instead (ImaginatorsRecomp #14). This set has Air.
+constexpr char kElementArchive[] = "juicedomain_permanent.pak";
+constexpr std::string_view kElementTexture = "textures@!UI_TFB!MenuComponents!ElementIcon_";
+constexpr std::string_view kElementSuffix = "`tga,101.igz";
 constexpr char kCoinArchive[] = "JuiceDomain_ActionPacks.pak";
 constexpr std::string_view kCoinTexture = "textures@!ui!AbilityShop_2015!coin_icon`tga,101.igz";
 // The menu's element names (portal_menu.h's "element:<name>" keys).
@@ -311,12 +315,19 @@ std::shared_ptr<FigureImage> ReadPicture(const IgaArchive& archive, size_t index
   return image;
 }
 
-// The German text next to a toy data file (`name` ends with kToyDataSuffix), empty if none.
+// A toy data file's name: ends with kToyDataSuffix in any case.
+bool IsToyDataFile(const std::string& name) {
+  if (name.find(kToyDataDir) == std::string::npos || name.size() < kToyDataSuffix.size()) return false;
+  return std::equal(kToyDataSuffix.begin(), kToyDataSuffix.end(), name.end() - kToyDataSuffix.size(),
+                    [](char a, char b) { return std::tolower((unsigned char)a) == std::tolower((unsigned char)b); });
+}
+
+// The German text next to a toy data file (IsToyDataFile), empty if none.
 GameText ToyText(const IgaArchive& archive, const std::unordered_map<std::string, size_t>& files,
                  const std::string& name) {
-  const std::string base = name.substr(0, name.size() - kToyDataSuffix.size());
-  for (std::string_view suffix : kToyTextSuffixes) {
-    auto it = files.find(base + std::string(suffix));
+  const std::string base = name.substr(0, name.size() - std::string_view(".igz").size());
+  for (std::string_view language : kToyTextLanguages) {
+    auto it = files.find(base + std::string(language));
     if (it == files.end()) continue;
     auto data = archive.Read(it->second);
     if (auto lng = data ? IgzFile::Parse(std::move(*data)) : std::nullopt) return ReadText(*lng);
@@ -329,7 +340,7 @@ void IndexToyData(const IgaArchive& archive, ToyMap& toys) {
   for (size_t i = 0; i < archive.size(); ++i) files.emplace(archive.name(i), i);
   for (size_t i = 0; i < archive.size(); ++i) {
     const std::string& name = archive.name(i);
-    if (name.find(kToyDataDir) == std::string::npos || !EndsWith(name, kToyDataSuffix)) continue;
+    if (!IsToyDataFile(name)) continue;
     auto data = archive.Read(i);
     if (!data) continue;
     auto igz = IgzFile::Parse(std::move(*data));

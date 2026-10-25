@@ -34,7 +34,7 @@ pictures, read at run time from the owner's disc:
 
 - **Pictures:** the round icons of the game's collection screen for every toy and variant, the
   sharper copies of the collection tracker where it has them (`src/game/toy_images.cpp`); the
-  element badges (the disc has nine; the menu draws its own Air medallion), the game's coin.
+  element icons of the game's menus (all ten, juicedomain_permanent.pak), the game's coin.
 - **Traits:** a sensei's battle class and a creation crystal's (from the owner's file of it) with
   the class's medallion and its German name ("Ritter", "Ninja", "Panzerbrecher"); a vehicle's
   terrain with the blueprint screen's symbol.

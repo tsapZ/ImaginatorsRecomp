@@ -347,3 +347,13 @@ launcher's achievements screen.
   key as this PC's keyboard prints it ("Ö / Leertaste", "Umschalt+Pfeil hoch") and has "Alle
   Tasten zurücksetzen" (SwapForceRecomp #66). skylanders-portal 218defd.
 - The "who's talking" circle sits higher, above the game's health bar.
+- **Air creation crystals have their pictures, all ten element symbols come from the game**
+  (#14): the Air crystals' toy data file is spelled `CYOS_Air_toyData.igz` (small t), and the
+  toy data files were matched by case, so toy 682 had no picture. Matched without case now: Air
+  Ninja, Air Lantern and the unreleased third show their 172x172 collection icons. The HUD's
+  bronze-ring badges have no Air one anywhere on the disc (every texture searched by content:
+  26,674 images, the nine badges score 0.998, nothing else above 0.82; the Skystones Smash Air card
+  uses an enemy portrait), so the menu takes the game menus' element icons now (`UI_TFB!
+  MenuComponents!ElementIcon_<Element>`, juicedomain_permanent.pak, the only archive with all
+  ten). Checked: the Imaginators tab's Air group shows both crystals with pictures and the Air chip
+  the game's swirl.
