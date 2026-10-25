@@ -46,6 +46,16 @@ an .iso unpacked with extract-xiso or an extracted folder: the same paths, the g
 voices), as for SuperChargers, whose owner has the European English / German one; and
 --language en puts in English instead of German (from either disc).
 
+With --movies (from the PS3 disc) the story movies speak German too (ImaginatorsRecomp #9). Their
+Bink 2 files carry a music-and-effects track (id 0) and one spoken track per language: this disc
+has two (ids 5 and 6), the PS3 disc twelve (ids 5-16, in the usual order English, French, Italian,
+German, Spanish, ...). The audio packets are the same bytes on both discs: this disc's 5 is the
+PS3's 9 (Spanish), its 6 the PS3's 7 (Italian), checked for every movie before it is touched. So
+each spoken packet of this disc's movie is replaced by the PS3's German one (id 8), in both
+spoken tracks, whichever the game picks; the picture (1024x608 here, 1024x576 on the PS3) and the
+music track stay this disc's. The original movie goes to german_text_backup/movies first, so
+--restore puts it back.
+
 Only the Python standard library is used.
 """
 
@@ -68,6 +78,10 @@ BACKUP_DIR = "german_text_backup"
 PLATFORM_PS3 = 6
 PLATFORM_XENON = 5
 XENON_STRINGS = "xenonplatformstrings_es.lng"
+MOVIES_DIR = "movies"  # in BACKUP_DIR: this disc's movies that --movies changed
+# The movies' spoken tracks on the PS3 disc (Bink track ids), and this disc's two in PS3 terms.
+PS3_SPOKEN = {"de": 8, "en": 5}
+THIS_DISC_SPOKEN = {5: 9, 6: 7}  # this disc's id -> the PS3's id with the same packets
 
 # Per target language: the files' suffix, the voices' folder, a cutscene voice's ending (English
 # ones have none: "APA1_Intro_gen.wav"), the name in messages.
@@ -471,11 +485,125 @@ def platform_strings(archives_dir, ps3_path, backup_dir):
     return missing
 
 
+def bink_layout(data):
+    """A Bink 2 file's audio track ids and frames: (ids, header length, frame offsets)."""
+    frames, = struct.unpack_from("<I", data, 8)
+    n, = struct.unpack_from("<I", data, 40)
+    at = 44 + (4 if data[:3] == b"KB2" and data[3:4] >= b"g" else 0)
+    at += 8 * n  # the largest decoded size and the sample rate / flags of each track
+    ids = list(struct.unpack_from("<%dI" % n, data, at))
+    at += 4 * n
+    offsets = [x & ~1 for x in struct.unpack_from("<%dI" % (frames + 1), data, at)]
+    return ids, at, offsets
+
+
+def bink_frame(data, start, tracks):
+    """One frame's audio packets (a list, one per track) and the video data after them."""
+    packets = []
+    at = start
+    for _ in range(tracks):
+        size, = struct.unpack_from("<I", data, at)
+        packets.append(data[at + 4:at + 4 + size])
+        at += 4 + size
+    return packets, at
+
+
+def german_movie(x360, ps3):
+    """This disc's movie with the PS3's spoken track in both spoken slots, or (None, why)."""
+    ids, index, offsets = bink_layout(x360)
+    p_ids, _, p_offsets = bink_layout(ps3)
+    want = PS3_SPOKEN[SOURCE["language"]]
+    if len(offsets) != len(p_offsets):
+        return None, "different length"
+    if sorted(i for i in ids if i) != sorted(THIS_DISC_SPOKEN) or want not in p_ids:
+        return None, "other tracks"
+    frames = len(offsets) - 1
+    out = []
+    largest = 0
+    for f in range(frames):
+        packets, video_at = bink_frame(x360, offsets[f], len(ids))
+        p_packets, _ = bink_frame(ps3, p_offsets[f], len(p_ids))
+        for t, track in enumerate(ids):
+            if track in THIS_DISC_SPOKEN:
+                # Only when this disc's packet is the PS3's same-language one: the same movie.
+                if packets[t] != p_packets[p_ids.index(THIS_DISC_SPOKEN[track])]:
+                    return None, "frame %d differs" % f
+                packets[t] = p_packets[p_ids.index(want)]
+        frame = b"".join(struct.pack("<I", len(p)) + p for p in packets) + x360[video_at:offsets[f + 1]]
+        largest = max(largest, len(frame))
+        out.append(frame)
+    keys = struct.unpack_from("<%dI" % (frames + 1), x360, index)
+    header = bytearray(x360[:index])
+    table = []
+    at = offsets[0]  # the header's own length is unchanged
+    for f in range(frames + 1):
+        table.append(at | (keys[f] & 1))
+        if f < frames:
+            at += len(out[f])
+    body = b"".join(out)
+    struct.pack_into("<I", header, 4, offsets[0] + len(body) - 8)
+    struct.pack_into("<I", header, 12, largest)
+    gap = x360[index + 4 * (frames + 1):offsets[0]]
+    return bytes(header) + struct.pack("<%dI" % (frames + 1), *table) + gap + body, ""
+
+
+def spoken_movies(archives_dir):
+    """This disc's movies with spoken tracks."""
+    names = []
+    for name in sorted(os.listdir(archives_dir)):
+        if name.lower().endswith(".bk2"):
+            with open(os.path.join(archives_dir, name), "rb") as f:
+                head = f.read(4096)
+            if len(head) < 48:
+                continue
+            n, = struct.unpack_from("<I", head, 40)
+            at = 44 + (4 if head[:3] == b"KB2" and head[3:4] >= b"g" else 0) + 8 * n
+            ids = struct.unpack_from("<%dI" % n, head, at) if n < 64 and at + 4 * n <= len(head) else ()
+            if any(i in THIS_DISC_SPOKEN for i in ids):
+                names.append(name)
+    return names
+
+
+def movies(archives_dir, source_files, backup_dir):
+    store = os.path.join(backup_dir, MOVIES_DIR)
+    os.makedirs(store, exist_ok=True)
+    changed, skipped = 0, []
+    for name in spoken_movies(archives_dir):
+        target = os.path.join(archives_dir, name)
+        source = source_files.get(name.lower())
+        if os.path.exists(os.path.join(store, name)):
+            continue  # done in an earlier run
+        if not source:
+            skipped.append("%s (not on the other disc)" % name)
+            continue
+        with open(target, "rb") as f:
+            x360 = f.read()
+        with open(source, "rb") as f:
+            ps3 = f.read()
+        new, why = german_movie(x360, ps3)
+        if new is None:
+            skipped.append("%s (%s)" % (name, why))
+            continue
+        os.replace(target, os.path.join(store, name))
+        with open(target, "wb") as f:
+            f.write(new)
+        changed += 1
+    if not os.listdir(store):
+        os.rmdir(store)
+    return changed, skipped
+
+
 def restore(archives_dir):
     backup_dir = os.path.join(archives_dir, BACKUP_DIR)
     if not os.path.isdir(backup_dir):
         print("Nothing to restore.")
         return
+    store = os.path.join(backup_dir, MOVIES_DIR)
+    if os.path.isdir(store):
+        for name in os.listdir(store):
+            os.replace(os.path.join(store, name), os.path.join(archives_dir, name))
+        os.rmdir(store)
+        print("The disc's own movies are back.")
     steps = {}
     for record_name in sorted(os.listdir(backup_dir)):
         if not record_name.endswith(".json"):
@@ -524,6 +652,9 @@ def main():
     parser.add_argument("--language", choices=sorted(LANGUAGES), default="de",
                         help="the language to put in: de (German, the default) or en (English)")
     parser.add_argument("--restore", action="store_true", help="put the 360 disc's archives back as they were")
+    parser.add_argument("--movies", action="store_true",
+                        help="also the story movies' spoken track, from the PS3 disc (about 4 GB of PS3 "
+                             "movies are read)")
     parser.add_argument("--voices", action="store_true",
                         help="also the voices (from an Xbox 360 disc they are the game's own; from the PS3 "
                              "disc experimental: MP3 banks, which this game's FMOD has a decoder for)")
@@ -556,6 +687,8 @@ def main():
     wanted = [ps3_archive_name(n) for n in names] + [ps3_voice_archive_name(n) for n in voices]
     if from_ps3() and not os.path.exists(os.path.join(backup_dir, "permanent_xenon.pak.platform.json")):
         wanted.append("permanent_ps3.pak")
+    if args.movies and from_ps3():
+        wanted += [n.lower() for n in spoken_movies(archives_dir)]
     temp = None
     try:
         if os.path.isfile(source) and from_ps3():
@@ -614,6 +747,10 @@ def main():
                 print("  %d / %d voice archives, %d voices %s" % (k, len(voices), total, language))
         if voices:
             print("Done: %d voices in %d archives are %s now." % (total, done, language))
+        if args.movies and from_ps3():
+            changed, skipped = movies(archives_dir, source_files, backup_dir)
+            print("Movies: %d speak %s now%s." % (changed, language, "; left as they are: " + ", ".join(skipped)
+                                                  if skipped else ""))
         print("Undo everything with --restore.")
     finally:
         if temp:

@@ -31,17 +31,19 @@ REXCVAR_DEFINE_BOOL(skip_opening_movie, false, "Game",
 namespace {
 
 struct Movie {
-  uint32_t size_field;  // header +4: file size minus 8
+  uint32_t size_field;  // header +4: file size minus 8; 0: any
   uint32_t frames;      // header +8
   bool opening;         // true: controlled by skip_opening_movie instead of skip_intro
   const char* name;
 };
 
-// Header values read from the disc's files (all "KB2i").
+// Header values read from the disc's files (all "KB2i"). The opening movie by its frame count
+// alone (no other movie on the disc has 5308): tools/german_text.py --movies puts the German
+// spoken track into it, which changes its size (ImaginatorsRecomp #9).
 constexpr Movie kMovies[] = {
     {0x00850D70, 226, false, "archives/Bumper_ATVI.bk2"},        // Activision logo
     {0x004EE5BC, 300, false, "archives/Bumper_TFB.bk2"},         // Toys for Bob logo
-    {0x068FF1B0, 5308, true, "archives/FMV01_Cinematic.bk2"},    // new-game opening movie
+    {0, 5308, true, "archives/FMV01_Cinematic.bk2"},             // new-game opening movie
 };
 
 }  // namespace
@@ -62,7 +64,7 @@ void BinkHeaderLoaded(PPCRegister& r1) {
   const uint32_t size_field = rex::memory::load_and_swap<uint32_t>(header + 4);
   const uint32_t frames = rex::memory::load_and_swap<uint32_t>(header + 8);
   for (const Movie& movie : kMovies) {
-    if (size_field != movie.size_field || frames != movie.frames) {
+    if ((movie.size_field && size_field != movie.size_field) || frames != movie.frames) {
       continue;
     }
     if (movie.opening ? skip_opening : skip_logos) {
