@@ -362,3 +362,6 @@ launcher's achievements screen.
   the same wording in every game where the setting is the same. The Back + Y row is called
   "Portal-Übersicht" now (it opens the portal overview since skylanders-portal f2c4940).
   skylanders-portal 2a97055.
+- **Hints in the pad's own buttons** (Core of Light #29, skylanders-portal 39ab210): after a press on a
+  PlayStation pad the menus' hints show its symbols and L1 / R1 / Options, on a Nintendo pad its
+  letters in their places and L / R / ZL / ZR / +; Xbox-like pads stay as they were.
