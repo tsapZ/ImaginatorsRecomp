@@ -290,3 +290,11 @@ launcher's achievements screen.
   answers yes without reading, nothing is written. Checked on a copied save: without the setting
   Albtraum has the padlock and "Besiege Kaos auf jedem Schwierigkeitsgrad zum Freischalten", with it
   the plain text, and A on it starts a new game.
+
+## 2026-10-25: 0.2.0-beta.2
+
+- The setup's version for what came since 0.2.0-beta.1: the vehicle request and a Skylander's death open the portal menu (#10), hats with pictures (#11), Nightmare from the start as an option (SwapForceRecomp #74). Also in every game: the portal overview (Back + Y / F5: what is on the portal, taken off one by one without lifting the
+  Skylander) and F4 > Controller (button jobs, vibration strength per player; not yet tried with a
+  real controller), skylanders-portal f2c4940 / 6e96c16; an A press right after the menu opened by
+  itself no longer picks a figure (SwapForceRecomp #72); one bad command-line option no longer drops
+  the others (rexglue-sdk 605000d).
