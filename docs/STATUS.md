@@ -309,3 +309,8 @@ launcher's achievements screen.
   guest stack of its own), writes `<list>.result` and quits. Checked: 472 real dumps "ok"; a
   flipped UID byte and zeroed R "bad signature", a 512-byte file "not 1024 bytes", two Swap Force
   figures "unsigned"; 5.2 s with the start, the window hidden (`--window_hidden=true`).
+
+## 2026-10-25: 0.2.0-beta.3
+
+- The setup's version for `--check_figures` (above): Core of Light's Imaginators figure import
+  asks this game which toy files it accepts. Nothing else changed since 0.2.0-beta.2.
