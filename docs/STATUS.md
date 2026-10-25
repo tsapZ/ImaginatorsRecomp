@@ -314,3 +314,18 @@ launcher's achievements screen.
 
 - The setup's version for `--check_figures` (above): Core of Light's Imaginators figure import
   asks this game which toy files it accepts. Nothing else changed since 0.2.0-beta.2.
+
+## 2026-10-25 (morning): German movies (#9)
+
+- **`tools/german_text.py --movies`**: the story movies (Bink 2) carry a music track (id 0) and a
+  spoken track per language; this disc has ids 5 and 6, the PS3 disc 5-16. The audio packets are
+  byte for byte the same on both discs: this disc's 5 is the PS3's 9, its 6 the PS3's 7, which
+  fits the usual order from 5 (English, French, Italian, German, Spanish): German is the PS3's 8.
+  The tool rebuilds each movie with the PS3's German packets in both spoken slots (frame table,
+  file size and largest frame recomputed; picture and music track untouched), after checking
+  every frame's packets match; the original goes to german_text_backup/movies (`--restore`).
+  Applied to this PC's rom/: 78 of 79 spoken movies; C500_BazookaFireFoxMoM left as it is (frame
+  183's packets differ between the discs). Checked: ffmpeg decodes the new German track (speech
+  level, -25.8 dB mean), the opening movie plays in a new game, `skip_opening_movie` still skips it
+  (now matched by its 5308 frames alone; its size changed). Whether it is German is for the
+  owner's ears; the track choice rests on the packet match and the language order.
