@@ -357,3 +357,8 @@ launcher's achievements screen.
   MenuComponents!ElementIcon_<Element>`, juicedomain_permanent.pak, the only archive with all
   ten). Checked: the Imaginators tab's Air group shows both crystals with pictures and the Air chip
   the game's swirl.
+- **Settings descriptions broken into lines** (SwapForceRecomp #69): one line on what a setting does,
+  the choices on lines of their own, notes ("Kostet ...", "Braucht D3D12") after a blank line;
+  the same wording in every game where the setting is the same. The Back + Y row is called
+  "Portal-Übersicht" now (it opens the portal overview since skylanders-portal f2c4940).
+  skylanders-portal 2a97055.
