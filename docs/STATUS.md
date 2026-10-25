@@ -329,3 +329,21 @@ launcher's achievements screen.
   level, -25.8 dB mean), the opening movie plays in a new game, `skip_opening_movie` still skips it
   (now matched by its 5308 frames alone; its size changed). Whether it is German is for the
   owner's ears; the track choice rests on the packet match and the language order.
+
+## 2026-10-25: afternoon (after 0.2.0-beta.3)
+
+- **A Skylander dies** (state 13): the figure is marked tired as the menu opens.
+- **The portal overview holds the game** while it is open (rexglue-sdk adf2a90, a frame gate in
+  VdSwap: the guest waits before handing over its next frame while the menus keep drawing;
+  skylanders-portal ab11cbc). It closes when the portal menu opens and after a vehicle is taken
+  off there (the game's next request took the Skylander off with the same A, SuperChargersRecomp).
+  Its cards stand just above the portal, and the portal's band of light goes all the way round.
+- **Tired Skylanders** (skylanders-portal `PlayerSkylanderTired`): when the game says a player's
+  Skylander is out of health, the menu opens and that figure gets a red cross until it has been on
+  the portal a while again (a new level). It stays pickable, so a wrong guess can't lock a figure.
+- **A hat shows only in a game that knows it** (Enigma's SuperChargers hat showed as "Hut Nr. 269").
+- **F4 opens on "Spiel"**, which now has the game's **volume** (0-100 %, SwapForceRecomp #68) and
+  the **frame rate display** (the SDK's F3 window, Core of Light #28). **F4 > Tastatur** names each
+  key as this PC's keyboard prints it ("Ö / Leertaste", "Umschalt+Pfeil hoch") and has "Alle
+  Tasten zurücksetzen" (SwapForceRecomp #66). skylanders-portal 218defd.
+- The "who's talking" circle sits higher, above the game's health bar.
