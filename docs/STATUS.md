@@ -281,3 +281,12 @@ launcher's achievements screen.
 - **Hats** (#11): the right name for SuperChargers-era hats (number minus 256), and pictures from
   SuperChargers' picture folder where this disc has none (it has three; the game shows hats as 3D
   models). Checked: Enigma's "Gold Rusher-Zahnradkappe" and Chop Chop's "Blumenhut" with pictures.
+- **Portal overview, F4 > Controller** (skylanders-portal f2c4940, 6e96c16; SwapForceRecomp #70,
+  #71, #73): Back + Y / F5 show what is on the portal and take single figures off; button jobs and
+  vibration strength per player. Not yet tried with a real controller.
+- **Nightmare from the start** (SwapForceRecomp #74, `nightmare_from_start`, off by default, F4 >
+  Spiel): the difficulty screen (sub_8317D680 / sub_8317D888) locks level 3 unless sub_829BE430 reads
+  the profile value "nightmare_difficulty_unlocked" as 1 (Swap Force's check, same shape); the hook
+  answers yes without reading, nothing is written. Checked on a copied save: without the setting
+  Albtraum has the padlock and "Besiege Kaos auf jedem Schwierigkeitsgrad zum Freischalten", with it
+  the plain text, and A on it starts a new game.

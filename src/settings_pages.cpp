@@ -282,6 +282,13 @@ SettingsPage GamePage() {
        "Namen, bevor man spielen kann. Kurz: 1,5 Sekunden, der Figurwechsel ist etwa 2 Sekunden "
        "schneller.",
        {{"0", "As in the game", "Wie im Spiel"}, {"1.5", "Short", "Kurz"}}});
+  page.settings.push_back(
+      {"nightmare_from_start", "Nightmare from the start", "Albtraum von Anfang an",
+       "The hardest difficulty can be picked right away, without finishing Story Mode first. "
+       "Your save stays as it is: turned off, Nightmare is locked again until you unlock it.",
+       "Der schwerste Schwierigkeitsgrad ist sofort w\xC3\xA4hlbar, ohne den Story-Modus erst "
+       "durchzuspielen. Dein Spielstand bleibt, wie er ist: Aus, ist Albtraum wieder gesperrt, "
+       "bis du ihn freispielst."});
   page.settings.push_back(skylanders::AchievementsSetting());
   // Spiel beenden / neu starten: a controller alone can't press Alt+F4.
   skylanders::AddQuitSettings(page);

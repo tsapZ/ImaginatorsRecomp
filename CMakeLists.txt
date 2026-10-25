@@ -59,6 +59,7 @@ set(IMAGINATORSRECOMP_SOURCES
     src/game/hats.cpp
     src/game/toy_images.cpp
     src/game/toy_upgrades.cpp
+    src/hooks/difficulty_hook.cpp
     src/hooks/figure_intro_hook.cpp
     src/hooks/frame_rate_hook.cpp
     src/hooks/fxaa_scale_hook.cpp

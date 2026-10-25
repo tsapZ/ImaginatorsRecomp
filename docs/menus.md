@@ -68,7 +68,9 @@ the figures on the emulated portal, A marks one to take off, Continue takes them
   VSync, render path, graphics card, graphics interface (D3D12 or Vulkan).
 - **Game:** language (automatic, English, German, French, Spanish, Italian), skip the logo
   movies, skip the opening movie, the figure intro ("Kurz": `figure_intro_seconds`),
-  achievements, quit and restart the game.
+  Nightmare from the start (`nightmare_from_start`; SwapForceRecomp #74: the hardest
+  difficulty without beating Kaos first, the save itself unchanged), achievements, quit and
+  restart the game.
 - **Portal:** virtual / both / USB / none (`portal_mode`), the portal menu opening by itself, only my
   figures, the player menu (no later games' figures: there is no later game).
 - **Controls:** the menu buttons, each with a few choices that don't clash, keyboard and mouse,
