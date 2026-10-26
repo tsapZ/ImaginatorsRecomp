@@ -369,3 +369,21 @@ launcher's achievements screen.
 ## 2026-10-25: 0.2.0-beta.4
 
 - The setup's version for what came since the last one: the Air creation crystals' pictures and all ten element symbols from the game (#14). Also in every game: the portal overview holds the game while open, a Skylander out of health gets the menu and a red cross, hats only where the game knows them, F4 opens on "Spiel" with volume and frame rate rows, key names as the keyboard prints them and a reset row, descriptions in short lines, hints in a PlayStation or Nintendo pad's own buttons, and figure changes with an HD pack without the stutter (skylanders-portal 39ab210, rexglue-sdk ce9dbb6).
+
+## 2026-10-26
+
+- **Portal menu loop with a figure already on** (skylanders-portal d4ce7b6): with a Skylander on the
+  emulated portal before the game asked (here put on at start by the input script), the game is in
+  its prompt state (5) for about 0.1 s and then loads the figure (7, 8). The menu that opens by
+  itself after 100 ms lifted the figure during that load, the game went back to 5 and asked again,
+  over and over (263 state changes in one run, the swirl repeating). The menu now waits 1.5 s while
+  the player's Skylander is on and opens only if the game still asks. Checked: the same run goes
+  8 -> 10 at once and into the first level.
+- **Pixelated shadows (#12), first look:** a RenderDoc capture and a texture-cache trace in the first
+  level at resolution scale 2: the cascade shadow map (512x2048, k_24_8) and the character's
+  (256x512) are loaded as scaled textures, so they do follow the resolution scale; scale 1, 2 and 3
+  look the same side by side. The blocky look is more likely the game's own filtering in console
+  texels; the lighting shader's sampling is the next thing to read.
+- English and German from the PS3 disc in Core of Light (Settings > Imaginators language), the same
+  files as tools/add_language.py (german_text.py before); the tool asks for --language now.
+- rexglue-sdk 07f1106 (no presenter null read when the window moves to another monitor at start).
