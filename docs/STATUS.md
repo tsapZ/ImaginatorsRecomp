@@ -387,3 +387,7 @@ launcher's achievements screen.
 - English and German from the PS3 disc in Core of Light (Settings > Imaginators language), the same
   files as tools/add_language.py (german_text.py before); the tool asks for --language now.
 - rexglue-sdk 07f1106 (no presenter null read when the window moves to another monitor at start).
+
+## 2026-10-26: 0.2.0-beta.5
+
+- The setup's version for what came since the last one: tools/german_text.py is tools/add_language.py now (the old name still works), and Core of Light 0.2.0-beta.8 adds the language from a PS3 disc by itself. Also in every game: no crash at start when the window moves to another monitor (rexglue-sdk 07f1106), and the portal menu no longer lifts a Skylander the game is still loading from the portal (skylanders-portal d4ce7b6).
