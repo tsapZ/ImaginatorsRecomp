@@ -74,7 +74,7 @@ started together from [Skylanders: Core of Light](https://github.com/tsapZ/Skyla
 - **A settings menu** in the same style (F4 or Back + RB): graphics, frame rate, language, portal,
   controls with the game's controller picture.
 - **Achievements**, shown in the portal menu and in the Core of Light launcher.
-- English and German menus (German from the PS3 disc, see below).
+- English and German menus; the game itself in English or German with your PS3 disc (see below).
 
 Screenshots are left out of this repository on purpose: they would show the games' artwork,
 which belongs to Activision.
@@ -84,21 +84,25 @@ which belongs to Activision.
 The European Xbox 360 disc with Spanish and Italian (PAL, title `41560930`; the European 360 discs
 of this game come in language pairs). Its SHA-256 is pinned in
 [docs/game/default.xex.sha256](docs/game/default.xex.sha256): the game, the installer and the launcher
-check it. A disc with English and German is not known to this port yet; until then German comes from
-the PS3 disc (below). Other pressings with the same build can be added by their hash, as
+check it. A disc with English and German is not known to this port yet; until then English or
+German come from the PS3 disc (below). Other pressings with the same build can be added by their hash, as
 SuperChargersRecomp did with its second European disc.
 
-## German text from your PS3 disc
+## English or German from your PS3 disc
 
 The Xbox 360 disc this port is made for has Spanish and Italian only. If you also own the PS3
-disc of the game, `tools/german_text.py` puts its German text into your extracted 360 disc
-(`rom/`); the game then shows German menus, texts and subtitles. With `--voices` it also puts
-in the German voices (experimental: the PS3's voices are MP3, which this game's sound engine has
-a decoder for; not yet heard in the game). With `--movies` the story movies speak German too
-(their German track from the PS3's movie of the same name; the picture stays the 360's).
+disc of the game, the easy way is the launcher, [Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight):
+Settings > Imaginators language, pick English, German or French, then the PS3 disc. It puts that
+language's texts, voices and movies into the installed game in about a minute, and takes them
+out again there too.
 
-    python tools/german_text.py --ps3 "D:\path\to\the PS3 disc.iso" [--voices] [--movies]
-    python tools/german_text.py --restore        (back to the disc's Spanish)
+Without the launcher, `tools/add_language.py` does the same (it was called `german_text.py`) in
+your extracted 360 disc (`rom/`): menus, texts and subtitles; with `--voices` the voices too (the
+PS3's are MP3, which this game's sound engine has a decoder for), with `--movies` the story
+movies' speech (from the PS3's movie of the same name; the picture stays the 360's).
+
+    python tools/add_language.py --language en --ps3 "D:\path\to\the PS3 disc.iso" [--voices] [--movies]
+    python tools/add_language.py --restore        (back to the disc's Spanish)
 
 It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3
 and about 2.3 GB of free space while it runs; it takes well under a minute. The title screen,
