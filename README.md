@@ -1,10 +1,127 @@
-# ImaginatorsRecomp
+# Imaginators Recompiled
 
-An unofficial native Windows port of **Skylanders: Imaginators** (2016, Xbox 360), made with
-static recompilation (ReXGlue). Work in progress: the first level plays with a figure on the emulated portal.
+**Skylanders: Imaginators** (Xbox 360, 2016) as a native Windows game: a controller, up to 3x the
+console's resolution, 60 FPS, creation crystals, no emulator. You bring your own copy of the game;
+nothing of it comes with this project.
 
-> **Unofficial fan project.** Not affiliated with or endorsed by Activision or Toys for Bob. This
-> repository contains **no game data**: you need your own copy of the game.
+**[Download](https://github.com/tsapZ/ImaginatorsRecomp/releases)** ·
+**[Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight)** (the launcher for all six games) ·
+**[Report a problem](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose)**
+
+> Unofficial fan project. Not affiliated with or endorsed by Activision or Toys for Bob.
+
+## Getting started
+
+**The easy way:** install [Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight/releases)
+and show it your disc. It downloads this game, sets it up and keeps it up to date, and does the same
+for the other five games. It can also switch the game to English, German or French
+([below](#english-german-or-french-from-your-ps3-disc)).
+
+**On its own:**
+
+1. Download `ImaginatorsRecompSetup-<version>.exe` from the [Releases](https://github.com/tsapZ/ImaginatorsRecomp/releases) page.
+2. Run it and pick your disc, as an ISO file or an extracted folder. It checks the version and takes
+   what it needs.
+3. Start the game from the desktop or the Start menu.
+
+What you need:
+
+- Windows 10 or 11 (64-bit) and a graphics card with DirectX 12
+- your own Xbox 360 disc of the game ([which one](#which-disc))
+- a controller (Xbox or compatible); keyboard and mouse work too. A real Portal of Power is optional.
+
+The setup isn't signed, so Windows may say "Windows protected your PC": click **More info**, then
+**Run anyway**. No admin rights needed.
+
+## What you get
+
+- **A sharper picture:** 1x, 2x or 3x the console's 720p, AMD CAS sharpening and 16x texture
+  filtering, with the presets *Performance*, *Quality* and *Best*. Bloom and motion blur can be
+  turned down.
+- **60 FPS**, or 30 as on the console, or 144 and more. The game keeps its normal speed.
+- **Ultrawide:** a wider window shows more to the sides, and the HUD moves out to the edges.
+- **No portal needed:** when the game asks for a Skylander, a menu with every figure opens by itself,
+  in the game's own look, creation crystals sorted by class. A real USB portal should work too
+  (not tried with this game yet).
+- **A shorter Skylander intro** when a figure comes in, if you like (in the settings).
+- **Your figures keep their progress** (level, gold, hats, upgrades) in files you can back up.
+- **A settings menu** in the game: graphics, frame rate, language, portal, controls.
+- **Achievements.**
+- **HD texture packs** work too ([how](https://github.com/tsapZ/SwapForceRecomp/blob/main/docs/texture-packs.md)).
+- **Languages:** the disc has Spanish and Italian; English, German or French come from your PS3
+  disc ([below](#english-german-or-french-from-your-ps3-disc)).
+
+## Controls
+
+The game plays as it always did. On top of that:
+
+| | Controller | Keyboard |
+|---|---|---|
+| Portal menu (put figures and crystals on) | Guide, or Back + Start | F6 |
+| Take figures off | Back + Y | F5 |
+| Settings | Back + RB | F4 |
+| Achievements | in the settings, under Game | F7 |
+| Which controller plays which player | L3 + R3 | F9 |
+
+The settings menu shows the keyboard keys for the game itself under Controls.
+
+## How far it is
+
+The opening cutscene and the first level play. Nobody has played the whole game to the end yet. If
+something breaks further in, please [tell me](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose).
+
+What's being worked on: [docs/roadmap.md](docs/roadmap.md). Known bugs and the details:
+[docs/STATUS.md](docs/STATUS.md).
+
+## Help
+
+**The setup says it's the wrong disc.** This port is made for one version of the game (see
+[Which disc](#which-disc)). If you have another one, open an issue with its name.
+
+**The game is in Spanish.** That's the disc; see
+[English, German or French](#english-german-or-french-from-your-ps3-disc).
+
+**It runs slowly.** Press F4, go to Graphics and pick *Performance*, or a lower internal resolution.
+
+**Where are my saves and figures?** Saves in `Documents\Skylanders\Imaginators`, figures in
+`Documents\Skylanders\Figures` (shared by all six games). Core of Light can export all of it for a
+new PC.
+
+**Why are there no screenshots?** They'd show the game's artwork, which belongs to Activision.
+
+## Which disc
+
+The European Xbox 360 disc with Spanish and Italian (PAL, title `41560930`; the European 360 discs
+of this game come in language pairs). Its SHA-256 is in
+[docs/game/default.xex.sha256](docs/game/default.xex.sha256); the setup, the game and the launcher
+check it. A 360 disc with English and German isn't known to this port yet. Other pressings with the
+same build can be added by their hash.
+
+## English, German or French from your PS3 disc
+
+If you also own the PS3 disc of the game, the easy way is
+[Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight): Settings > Imaginators language,
+pick English, German or French, then the PS3 disc. It puts that language's texts, voices and movies
+into the installed game in about a minute, and can take them out again.
+
+Without the launcher, `tools/add_language.py` does the same in your extracted 360 disc (`rom/`):
+menus, texts and subtitles; with `--voices` the voices too, with `--movies` the story movies'
+speech (the picture stays the 360's).
+
+    python tools/add_language.py --language en --ps3 "D:\path\to\the PS3 disc.iso" [--voices] [--movies]
+    python tools/add_language.py --restore        (back to the disc's Spanish)
+
+It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3 and
+about 2.3 GB of free space while it runs, and takes well under a minute. The title screen, the
+licence agreement and the Xbox 360's own messages switch to that language too.
+
+## Reporting a problem
+
+Open an [issue](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose) with the **Problem** form:
+what you did and what happened. It helps a lot to attach the report from Core of Light (**LB**, the
+launcher's settings, > **Report a problem**, or the question it asks after a crash). That's one text
+file on your desktop with the latest logs and settings, your Windows user name taken out. Without
+the launcher, the logs are in the `logs` folder next to the game's exe.
 
 ## Why this exists
 
@@ -19,126 +136,16 @@ Claude Code, the recompile setup, the fixes, the portal menu, the launcher and t
 most of the docs too. I decided what to build, said what was broken and played the games a lot. If
 AI-made projects aren't your thing, that's fair.
 
-It runs on its own; [Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight) is the launcher
-for all six ports if you want them in one place.
+## For developers
 
-## Play it
+The game's Xbox 360 code is recompiled to x86-64 with [ReXGlue](https://github.com/rexglue/rexglue-sdk)
+(no CPU emulation); the graphics go through Xenia's D3D12 path. This repository holds only our own
+code: the recompiled game code is made on your PC from your disc's `default.xex` when you build.
 
-You need:
-
-- Windows 10 or 11 (64-bit) and a graphics card with DirectX 12
-- **your own copy of the game**: the Xbox 360 disc listed under [Which disc](#which-disc), as an ISO
-  or an extracted folder (nothing of the game comes with this project)
-- a controller (Xbox or compatible; keyboard and mouse work too). A real Portal of Power is
-  optional: the emulated portal's menu has every figure
-
-Then:
-
-1. Download from the [Releases](https://github.com/tsapZ/ImaginatorsRecomp/releases) page: just this game's
-   installer, or [Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight/releases), the
-   launcher that downloads and sets up all six games.
-2. Start it and choose your ISO. It checks that it is the right disc and sets the game up.
-3. Play. When the game asks for a Skylander, the portal menu opens by itself: pick one.
-
-## Status
-
-| Area | State |
-|---|---|
-| Boot, menus | ✅ logo movies (skippable), title, licence agreement, save slots, difficulty, opening cutscene |
-| First level | ✅ with a figure on the emulated portal |
-| Rest of the game | 🟡 not played through yet |
-| Frame rate | ✅ 60 FPS, 144 and more |
-| Portal | ✅ emulated; a real USB portal not tried with this game yet |
-| Portal menu | ✅ opens by itself at the game's prompt; the game's collection icons, hats, upgrade trees and the creation crystals' class |
-| Settings | ✅ native 3D picture, the game's FXAA at the internal resolution, bloom and motion blur strength, the shorter Skylander intro, the controller picture |
-| Ultrawide | ✅ the 3D view and the HUD at the edges |
-| Installer tested on a clean PC | ⬜ planned |
-
-Where each part stands and what comes next: [docs/roadmap.md](docs/roadmap.md); session details and
-known bugs: [docs/STATUS.md](docs/STATUS.md). Part of six ports of the Xbox 360 Skylanders games,
-started together from [Skylanders: Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight).
-
-## What it adds
-
-- **Native Windows program**: the game's Xbox 360 code recompiled to x86-64 (no emulator of the
-  CPU), the GPU through Xenia's D3D12 path.
-- **Picture**: internal resolution 1x, 2x or 3x of the console's 720p, sharpened with AMD CAS,
-  16x texture filtering, presets *Performance*, *Quality* (2x, recommended) and *Best*. The game's
-  own 3D picture at its native size instead of the console's smaller one is an experimental
-  option.
-- **60 FPS** (what the installer sets); 30 as on the console, or 144, 200 and more.
-- **Ultrawide**: a wider window shows more to the sides, with the HUD at the window's edges. In fullscreen with the window size on "Automatic" it takes your screen's shape by itself (21:9, 32:9); the window sizes list the usual ultrawide ones too.
-- **The Portal of Power** emulated (figures as `.dump` files), a real USB portal, or both at once.
-  The **portal menu** (Guide, Back + Start or F6) is drawn in the game's own fonts with its own
-  pictures of every figure, their hats and upgrade trees, per player, for controller and keyboard.
-- **A settings menu** in the same style (F4 or Back + RB): graphics, frame rate, language, portal,
-  controls with the game's controller picture.
-- **Achievements**, shown in the portal menu and in the Core of Light launcher.
-- English and German menus; the game itself in English or German with your PS3 disc (see below).
-
-Screenshots are left out of this repository on purpose: they would show the games' artwork,
-which belongs to Activision.
-
-## Which disc
-
-The European Xbox 360 disc with Spanish and Italian (PAL, title `41560930`; the European 360 discs
-of this game come in language pairs). Its SHA-256 is pinned in
-[docs/game/default.xex.sha256](docs/game/default.xex.sha256): the game, the installer and the launcher
-check it. A disc with English and German is not known to this port yet; until then English or
-German come from the PS3 disc (below). Other pressings with the same build can be added by their hash, as
-SuperChargersRecomp did with its second European disc.
-
-## English or German from your PS3 disc
-
-The Xbox 360 disc this port is made for has Spanish and Italian only. If you also own the PS3
-disc of the game, the easy way is the launcher, [Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight):
-Settings > Imaginators language, pick English, German or French, then the PS3 disc. It puts that
-language's texts, voices and movies into the installed game in about a minute, and takes them
-out again there too.
-
-Without the launcher, `tools/add_language.py` does the same (it was called `german_text.py`) in
-your extracted 360 disc (`rom/`): menus, texts and subtitles; with `--voices` the voices too (the
-PS3's are MP3, which this game's sound engine has a decoder for), with `--movies` the story
-movies' speech (from the PS3's movie of the same name; the picture stays the 360's).
-
-    python tools/add_language.py --language en --ps3 "D:\path\to\the PS3 disc.iso" [--voices] [--movies]
-    python tools/add_language.py --restore        (back to the disc's Spanish)
-
-It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3
-and about 2.3 GB of free space while it runs; it takes well under a minute. The title screen,
-the licence agreement and the Xbox 360's own messages switch to that language too. Run it again after an
-update of the tool: it only does what is not done yet.
-
-## Installing
-
-- **Installer (beta):** `just package-installer` builds `installer/Output/ImaginatorsRecompSetup-<version>.exe`
-  (Inno Setup; the same file is on the [Releases](https://github.com/tsapZ/ImaginatorsRecomp/releases) page). It installs into your user folder
-  (`%LOCALAPPDATA%\Programs\Imaginators Recompiled`, no admin rights) and asks for your disc, as an ISO or an
-  already extracted folder (it checks the version, then copies the files next to the game), the
-  game language, the portal (emulated, real USB or none), the window size and the internal
-  resolution. Everything else starts at the settings above (60 FPS, sharpening, 16x filtering) and is changed later in the F4 menu.
-- **[Skylanders: Core of Light](https://github.com/tsapZ/SkylandersCoreOfLight)**, the launcher
-  for all six ports, finds the installed game, sets up its disc from your ISO, keeps profiles with
-  their own saves and figures and starts the game.
-- **From source:** build it (below), put the extracted disc into `rom/` ([rom/README.md](rom/README.md))
-  and run `just play-release`.
-
-Your figures are `.dump` files in `Documents\Skylanders\Figures`, shared by every game, like real
-figures next to the portal. The saves are in `Documents\Skylanders\Imaginators` (the first start copies them there from the old `Documents\imaginatorsrecomp`), the settings file next to the
-game's exe.
-
-## Reporting a problem
-
-Open an [issue](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose) with the **Problem** form and say
-what you did and what happened. The most useful thing to add is the report from Core of Light:
-**LB** (the launcher's settings) > **Report a problem**, or the question that comes up by itself
-after a crash. It writes one text file to the desktop with the latest logs and settings of every
-game, with your Windows user name taken out; drag that file into the issue. Without the launcher,
-each game keeps its logs in the `logs` folder next to its exe.
-
-## Building
-
-The same as the other Skylanders ports: see [docs/development.md](docs/development.md).
+Building needs Windows, Visual Studio 2022 (C++ workload and C++ Clang tools), CMake, Ninja, just,
+Git and Python 3, and the extracted disc in `rom/` ([rom/README.md](rom/README.md)). Steps:
+[docs/development.md](docs/development.md), then `just play-release`. `just package-installer` builds
+the setup. All docs: [docs/README.md](docs/README.md).
 
 ## Credits
 
