@@ -106,7 +106,7 @@ movies' speech (from the PS3's movie of the same name; the picture stays the 360
 
 It needs 7-Zip for the PS3 .iso (or the disc's extracted `PS3_GAME\USRDIR` folder), Python 3
 and about 2.3 GB of free space while it runs; it takes well under a minute. The title screen,
-the licence agreement and the Xbox 360's own messages become German too. Run it again after an
+the licence agreement and the Xbox 360's own messages switch to that language too. Run it again after an
 update of the tool: it only does what is not done yet.
 
 ## Installing
