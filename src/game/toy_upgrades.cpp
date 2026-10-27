@@ -47,13 +47,16 @@
 
 #include <rex/logging.h>
 
-#include "game/alchemy/iga_archive.h"
-#include "game/alchemy/igz_file.h"
+#include "alchemy/iga_archive.h"
+#include "alchemy/igz_file.h"
 #include "game/game_data.h"
 #include "game/toy_images.h"
 #include "portal_rex/menu_draw.h"
 
 namespace imaginatorsrecomp {
+
+// The games' shared Alchemy readers (skylanders-portal src/alchemy).
+namespace alchemy = skylanders::alchemy;
 namespace {
 
 using alchemy::IgaArchive;

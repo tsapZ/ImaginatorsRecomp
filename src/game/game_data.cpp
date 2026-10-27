@@ -4,6 +4,9 @@
 #include <cctype>
 
 namespace imaginatorsrecomp {
+
+// The games' shared Alchemy readers (skylanders-portal src/alchemy).
+namespace alchemy = skylanders::alchemy;
 namespace {
 
 using alchemy::IgaArchive;

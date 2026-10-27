@@ -47,10 +47,6 @@ endif()
 # Sources
 set(IMAGINATORSRECOMP_SOURCES
     src/main.cpp
-    src/game/alchemy/iga_archive.cpp
-    src/game/alchemy/igz_file.cpp
-    src/game/alchemy/inflate.cpp
-    src/game/alchemy/lzma_decoder.cpp
     src/game/kernel_stubs.cpp
     src/game/magic_moment_watch.cpp
     src/game/game_fonts.cpp
@@ -71,9 +67,6 @@ set(IMAGINATORSRECOMP_SOURCES
     src/hooks/ultrawide_hook.cpp
     src/localization.cpp
     src/settings_pages.cpp
-    src/dev/gpu_diagnostics.cpp
-    src/dev/input_script.cpp
-    src/dev/write_watch.cpp
 )
 
 if(WIN32)
@@ -87,8 +80,6 @@ rexglue_setup_target(imaginatorsrecompiled GPU_PLUGINS xenos)
 if(REXSDK_DIR)
     # An installed SDK ships imgui's headers next to its own; an in-tree build must point at them.
     target_include_directories(imaginatorsrecompiled PRIVATE "${REXSDK_DIR}/thirdparty/imgui")
-    # stb_image's zlib decoder for the deflate-compressed game archives (src/game/alchemy/inflate.cpp).
-    target_include_directories(imaginatorsrecompiled PRIVATE "${REXSDK_DIR}/thirdparty/stb")
 endif()
 
 # Seed a fresh build dir with the settings-file template. Never overwrites an existing one: the
@@ -97,46 +88,13 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/imaginatorsrecomp.toml")
     file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/imaginatorsrecomp.toml.example" "${CMAKE_BINARY_DIR}/imaginatorsrecomp.toml")
 endif()
 
-# --- Pinned game executable -------------------------------------------------
-set(IMAGINATORSRECOMP_XEX_HASH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/docs/game/default.xex.sha256")
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${IMAGINATORSRECOMP_XEX_HASH_FILE}")
-file(READ "${IMAGINATORSRECOMP_XEX_HASH_FILE}" IMAGINATORSRECOMP_XEX_HASH_TEXT)
-string(REGEX MATCH "^[0-9a-fA-F]+" IMAGINATORSRECOMP_XEX_SHA256 "${IMAGINATORSRECOMP_XEX_HASH_TEXT}")
-string(LENGTH "${IMAGINATORSRECOMP_XEX_SHA256}" IMAGINATORSRECOMP_XEX_SHA256_LEN)
-if(NOT IMAGINATORSRECOMP_XEX_SHA256_LEN EQUAL 64)
-    message(FATAL_ERROR "docs/game/default.xex.sha256 must start with a 64-character hex SHA-256 (found ${IMAGINATORSRECOMP_XEX_SHA256_LEN} hex characters)")
-endif()
-
-add_library(imaginatorsrecomp_verify STATIC src/xex_verify.cpp)
-target_include_directories(imaginatorsrecomp_verify PUBLIC src)
-# Uses the SDK's vendored, portable SHA-256 (thirdparty/crypto) instead of a platform crypto API
-# (BCrypt on Windows has no Linux/macOS equivalent), so this one implementation covers every preset.
-if(NOT REXSDK_DIR)
-    message(FATAL_ERROR "REXSDK_DIR must be set (imaginatorsrecomp_verify needs its vendored SHA-256 implementation)")
-endif()
-target_include_directories(imaginatorsrecomp_verify PRIVATE "${REXSDK_DIR}/thirdparty")
-target_sources(imaginatorsrecomp_verify PRIVATE "${REXSDK_DIR}/thirdparty/crypto/sha256.cpp")
-
-target_link_libraries(imaginatorsrecompiled PRIVATE imaginatorsrecomp_verify skylanders_portal_rex)
+target_link_libraries(imaginatorsrecompiled PRIVATE skylanders_portal_rex skylanders_alchemy)
 # The exe's icon: the game's logo from the owner's disc (rom/nxeart), made at build time (#6).
 skylanders_game_icon(imaginatorsrecompiled "${CMAKE_CURRENT_SOURCE_DIR}/rom")
-target_compile_definitions(imaginatorsrecompiled PRIVATE IMAGINATORSRECOMP_XEX_SHA256="${IMAGINATORSRECOMP_XEX_SHA256}")
 
-enable_testing()
-add_executable(imaginatorsrecomp_tests tests/xex_verify_test.cpp)
-target_link_libraries(imaginatorsrecomp_tests PRIVATE imaginatorsrecomp_verify)
-add_test(NAME xex_verify COMMAND imaginatorsrecomp_tests)
-
-add_executable(imaginatorsrecomp_xexcheck src/tools/xex_check_cli.cpp)
-target_link_libraries(imaginatorsrecomp_xexcheck PRIVATE imaginatorsrecomp_verify)
-target_compile_definitions(imaginatorsrecomp_xexcheck PRIVATE IMAGINATORSRECOMP_XEX_SHA256="${IMAGINATORSRECOMP_XEX_SHA256}")
-
-# Process-boundary test: runs the actual built imaginatorsrecomp_xexcheck.exe against a non-ASCII path to
-# catch argv narrowing (a plain main(argc, char**) loses characters outside the system code page on
-# Windows). Depends on imaginatorsrecomp_xexcheck existing in the same output directory at test time.
-add_executable(xex_check_cli_argv_test tests/xex_check_cli_argv_test.cpp)
-add_test(NAME xex_check_cli_argv COMMAND xex_check_cli_argv_test)
-
-add_executable(xex_check_exit_code_test tests/xex_check_exit_code_test.cpp)
-target_include_directories(xex_check_exit_code_test PRIVATE src)
-add_test(NAME xex_check_exit_code COMMAND xex_check_exit_code_test)
+# --- Pinned game executable -------------------------------------------------
+# The disc check (skylanders-portal src/xex, cmake/game_xex.cmake): the supported discs' SHA-256
+# from docs/game/default.xex.sha256 in the game and in imaginatorsrecomp_xexcheck, the installer's check,
+# with their tests.
+skylanders_game_xex(TARGET imaginatorsrecompiled PREFIX imaginatorsrecomp TITLE "Skylanders: Imaginators"
+                    HASH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/docs/game/default.xex.sha256")
