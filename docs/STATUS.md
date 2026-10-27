@@ -421,3 +421,7 @@ launcher's achievements screen.
 ## 2026-10-27: Imaginator portraits
 
 - **The portraits of the player's own Imaginators** (creation crystals, HUD and menus) were black (ImaginatorsRecomp #15). The game renders the character into a full-screen render target and copies the picture out on the CPU with XGUntileSurface (sub_83646FB8); here the resolve was only in the GPU's copy. src/hooks/portrait_readback_hook.cpp asks the GPU for that surface right before the copy (rexglue-sdk 7be1eb2, ReadBackResolvedMemory): one 3.5 MB read back per portrait instead of readback_resolve's fifth of the frame rate. Found with guard pages on every resolved range (the only CPU reader, while a level loads). Checked: Fire Knight 0, then Water Ninja 0 swapped in mid-level, both portraits right, 74 FPS uncapped as before.
+
+## 2026-10-27: shared libraries
+
+- SDK 642311f: menus over a held game (the portal overview) present at the frame cap instead of every 100 ms: no more 10 FPS stutter in the overview.
