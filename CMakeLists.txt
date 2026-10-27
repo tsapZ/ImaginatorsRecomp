@@ -61,6 +61,7 @@ set(IMAGINATORSRECOMP_SOURCES
     src/hooks/frame_rate_hook.cpp
     src/hooks/fxaa_scale_hook.cpp
     src/hooks/intro_skip_hook.cpp
+    src/hooks/portrait_readback_hook.cpp
     src/hooks/post_effects_hook.cpp
     src/hooks/scene_size_hook.cpp
     src/hooks/stuck_falling_hook.cpp
