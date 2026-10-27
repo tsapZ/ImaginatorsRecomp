@@ -211,6 +211,13 @@ class ImaginatorsrecompApp : public rex::ReXApp {
     SetGuestFrameStats([this] { return ComputeFrameStats(); });
     // 16x texture filtering unless the owner set his own (skylanders-portal settings_schema.h).
     skylanders::ApplyGraphicsDefaults();
+    // At resolution scale 2 and up, a streaky, pixelated seam ran round the character and its
+    // shadow in the levels (the owner, watching Chop Chop in the first level, 2026-10-27). With each
+    // host pixel's centre as the shaders' pixel position it is gone: compared at scale 2 on the
+    // same route, side by side, the blurs (shadow mask, bloom) as before. Scale 1 is the same
+    // either way. The same option as in SSARecomp (#40), where a pass turns the pixel position into
+    // a texture coordinate the D3D9 way, (position + 0.5) / size.
+    SetDefaultIfUnset("draw_resolution_scaled_pixel_position_centered", "true");
     // An HD texture pack in Documents\Skylanders\Textures\Imaginators, if there is one.
     skylanders::UseTexturePack(user_data_root(), "Imaginators");
     // Estimate the EDRAM extent of draws without clipping by running their vertex shader on the

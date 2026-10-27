@@ -429,3 +429,4 @@ launcher's achievements screen.
 ## 2026-10-27: 0.3.0-beta.1
 
 - The setup's version for what came since the last one: one version for all six games from now on; the portal overview (Back + Y, F5) runs smoothly while it holds the game (rexglue-sdk 642311f), and two upstream SDK fixes: kernel objects freed again, saved-game results checked properly (rexglue-sdk 4a34314, 3cb725a).
+- **No streaky seam round the character at resolution scale 2 and up**: a pixelated, striped edge ran round Chop Chop and his shadow in the first level (the owner, 2026-10-27). draw_resolution_scaled_pixel_position_centered (rexglue-sdk 5201aa3, as in SSARecomp #40) is on now unless set: with each host pixel's centre as the shaders' pixel position the seam is gone. Compared at scale 2 on im_new, off and on, crops side by side: the edges clean, the shadow and bloom blurs as before; the title screen as at scale 1.
