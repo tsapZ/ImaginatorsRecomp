@@ -434,3 +434,7 @@ launcher's achievements screen.
 ## 2026-10-27: shared libraries
 
 - SDK cf59726: the portrait read back writes only the requested range, newest resolve last (a review finding, resolution scale 2 and up).
+
+## 2026-10-28: shared libraries
+
+- Library 433cb9f: the crash report also logs where the SDK's fatal errors happen (SSARecomp #42), and developer tools (pollwatch, the write watch works in Trap Team).
