@@ -78,6 +78,16 @@ endif()
 
 rexglue_setup_target(imaginatorsrecompiled GPU_PLUGINS xenos)
 
+# The developer kit (a separate private repository, tsapZ/SkylandersDevKit): level loading and
+# level sweeps for test runs. Built only into a developer build folder (a local
+# CMakeUserPresets.json preset), never into a release. Off unless SKYLANDERS_DEVKIT_DIR points at
+# a checkout of it.
+set(SKYLANDERS_DEVKIT_DIR "" CACHE PATH "A checkout of SkylandersDevKit to build in (empty: none)")
+if(SKYLANDERS_DEVKIT_DIR)
+    include("${SKYLANDERS_DEVKIT_DIR}/games/im/devkit.cmake")
+    skylanders_devkit_add(imaginatorsrecompiled)
+endif()
+
 if(REXSDK_DIR)
     # An installed SDK ships imgui's headers next to its own; an in-tree build must point at them.
     target_include_directories(imaginatorsrecompiled PRIVATE "${REXSDK_DIR}/thirdparty/imgui")
