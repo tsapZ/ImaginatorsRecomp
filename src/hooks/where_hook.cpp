@@ -1,8 +1,8 @@
 // Where the player is, for problem reports (skylanders-portal dev/where.h).
 //
-// The level: the level archive the game opened last (rom\archives: Level_500 to Level_512,
-// Level_Crash, Hub_2016, EA_01 to EA_10, PU_*, the adventure packs APA1-4, APL1-4, APS1-4; their
-// sound banks, cutscenes and figure parts are other archives).
+// The level: the level archive the game opened last (rom\archives: Overland_Map, the map between
+// the levels; Level_500 to Level_512, Level_Crash, Hub_2016, EA_01 to EA_10, PU_*, the adventure
+// packs APA1-4, APL1-4, APS1-4; their sound banks, cutscenes and figure parts are other archives).
 //
 // The player: CPlayerJumpComponent's stuck-falling check, sub_82EEB308, runs once a frame for every
 // player (from the component's update sub_82EEB628; stuck_falling_hook.cpp has midasm hooks inside
@@ -29,10 +29,11 @@ uint32_t Load32(uint8_t* base, uint32_t address) { return rex::memory::load_and_
 float LoadFloat(uint8_t* base, uint32_t address) { return rex::memory::load_and_swap<float>(base + address); }
 bool GuestPointer(uint32_t v) { return v >= 0x40000000 && v < 0xC0000000; }
 
-// "game:\archives\Level_503.pak" -> "Level_503"; "" for any other file.
+// "D:\archives\Level_503.pak" -> "Level_503"; "" for any other file.
 std::string LevelOfArchive(std::string_view path) {
-  static const std::regex level(R"((?:^|[\\/])((?:Level_(?:\d+|Crash)|Hub_2016|EA_\d+|PU_\d+|AP[ALS]\d))\.pak$)",
-                                std::regex::icase);
+  static const std::regex level(
+      R"((?:^|[\\/])((?:Overland_Map|Level_(?:\d+|Crash)|Hub_2016|EA_\d+|PU_\d+|AP[ALS]\d))\.pak$)",
+      std::regex::icase);
   std::cmatch m;
   if (!std::regex_search(path.data(), path.data() + path.size(), m, level)) return {};
   return m[1].str();
