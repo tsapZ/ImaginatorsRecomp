@@ -99,7 +99,7 @@ What's being worked on: [docs/roadmap.md](docs/roadmap.md). Known bugs and the d
 ## Help
 
 **The setup says it's the wrong disc.** This port is made for one version of the game (see
-[Which disc](#which-disc)). If you have another one, open an issue with its name.
+[Which disc](#which-disc)). If you have another one, open an issue with the message (it names the disc's title, region and hash).
 
 **The game is in Spanish.** That's the disc; see
 [English, German or French](#english-german-or-french-from-your-ps3-disc).
@@ -117,8 +117,8 @@ new PC.
 The European Xbox 360 disc with Spanish and Italian (PAL, title `41560930`; the European 360 discs
 of this game come in language pairs). Its SHA-256 is in
 [docs/game/default.xex.sha256](docs/game/default.xex.sha256); the setup, the game and the launcher
-check it. A 360 disc with English and German isn't known to this port yet. Other pressings with the
-same build can be added by their hash.
+check it. A 360 disc with English and German isn't known to this port yet; if it has the same
+code it works as well: the check also compares the code part of the file ([docs/game/default.xex.code](docs/game/default.xex.code)).
 
 ## English, German or French from your PS3 disc
 
