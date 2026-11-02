@@ -526,3 +526,13 @@ launcher's achievements screen.
 ## 2026-11-01: 0.4.0-beta.3
 
 - The setup's version for what came since the last one: A bit faster renderer (unchanged shader constants skipped, only changed textures reloaded); Trap Team also gets the villain time cheat (#18)
+
+## 2026-11-02: No health loss
+
+- Extras > No health loss (`cheat_no_health_loss`, off), the setting Spyro's Adventure, Giants and Trap
+  Team have. Imaginators has a programmer's god mode of its own: the debug byte "GodMode"
+  (0x837F83EC, PROGRAMMER_VARS) that its damage check sub_82A11758 reads first; with it set the check zeroes
+  the damage of the players' Skylanders ("Damage reduced when in God-Mode"). src/hooks/god_mode_hook.cpp
+  reports the byte as set while the cheat is on (midasm hook at 0x82A11794); enemies lose health as before.
+- The god mode lets hits through whose description forces the damage (lava, burning); a second
+  hook makes that byte 0 for a spared victim, a third logs the first kept-off hit. Kit sweep: the lava arena ea_02: HUD 100 of 450 before the force-byte hook, 450 of 450 with it (27 of 27 hits kept off); enemy hits don't go through this check.

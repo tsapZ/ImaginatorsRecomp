@@ -492,6 +492,12 @@ SettingsPage ExtrasPage() {
        "\n"
        "Dein Spielstand bleibt, wie er ist: Aus, ist Albtraum wieder gesperrt, bis du ihn "
        "freispielst."});
+  // As in Spyro's Adventure, Giants and Trap Team, same setting name: src/hooks/god_mode_hook.cpp
+  // turns on the game's own god mode, which spares only the players' Skylanders.
+  page.settings.push_back(skylanders::CheatSetting(
+      {"cheat_no_health_loss", "No health loss", "Keine Lebenspunkte verlieren",
+       "Your Skylanders don't lose health when they get hit. Enemies still do.",
+       "Deine Skylander verlieren keine Lebenspunkte, wenn sie getroffen werden. Gegner schon."}));
   return page;
 }
 
