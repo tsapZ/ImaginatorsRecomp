@@ -536,3 +536,7 @@ launcher's achievements screen.
   reports the byte as set while the cheat is on (midasm hook at 0x82A11794); enemies lose health as before.
 - The god mode lets hits through whose description forces the damage (lava, burning); a second
   hook makes that byte 0 for a spared victim, a third logs the first kept-off hit. Kit sweep: the lava arena ea_02: HUD 100 of 450 before the force-byte hook, 450 of 450 with it (27 of 27 hits kept off); enemy hits don't go through this check.
+
+## 2026-11-03: shared libraries
+
+- Xbox 360 portal over WinUSB: each read can hold two 32-byte frames (the portal sends full packets), each now goes to the game; the first 12 commands are logged (TrapTeamRecomp #19)
