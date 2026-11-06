@@ -672,3 +672,7 @@ launcher's achievements screen.
 ## 2026-11-06: more cheats
 
 - Extras: always crit, elemental power everywhere, gold and XP multipliers (x2, x3, x5, x10), behind Show cheats (CoL #48, TT #20). src/hooks/attribute_cheats_hook.cpp, four midasm hooks on the game's own character attribute code, found in generated/ (debug tools: binding names beside their wrappers, listings with addresses anchored at labels and call returns): the damage code sub_82F40670 rolls 0..100 against the attack's crit chance plus the attacker's (from sub_82F39B20, with its bonus against the target's kind; the hook at 0x82F40718 makes it 100), sub_82F1E698 is the element check of the attribute bonuses (0x82F1E764, r3 = 1), sub_82F39A30 / sub_82F39940 the gold / XP multipliers of the pickup code sub_82F45FC8 (their blr, f1 times the setting). Developer kit run in level_501 with all four on: element check 0 -> 1, crit chance 2 -> 100, gold multiplier 1.03 -> 5.15, XP multiplier 1.01 -> 5.03.
+
+## 2026-11-06: 0.4.2-beta.6
+
+- The setup's version for what came since the last one: Fewer copies into depth buffers at higher resolutions (Trap Team about 2 % faster at 2x); Swap Force, SuperChargers and Imaginators: always crit, elemental power everywhere, gold and XP multipliers as cheats
