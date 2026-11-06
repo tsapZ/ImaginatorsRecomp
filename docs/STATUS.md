@@ -668,3 +668,7 @@ launcher's achievements screen.
 ## 2026-11-06: shared libraries
 
 - Fewer copies into depth buffers at higher resolutions (SDK 20dd8d1, transfer_skip_overwritten_depth): hubs at scale 2 Trap Team 109.7 -> 112.1, Swap Force 115.8 -> 117.4, Imaginators 122.0 -> 123.3 FPS; the shared Extras rows can be cheats with options (gold and XP multipliers, portal 7be41de)
+
+## 2026-11-06: more cheats
+
+- Extras: always crit, elemental power everywhere, gold and XP multipliers (x2, x3, x5, x10), behind Show cheats (CoL #48, TT #20). src/hooks/attribute_cheats_hook.cpp, four midasm hooks on the game's own character attribute code, found in generated/ (debug tools: binding names beside their wrappers, listings with addresses anchored at labels and call returns): the damage code sub_82F40670 rolls 0..100 against the attack's crit chance plus the attacker's (from sub_82F39B20, with its bonus against the target's kind; the hook at 0x82F40718 makes it 100), sub_82F1E698 is the element check of the attribute bonuses (0x82F1E764, r3 = 1), sub_82F39A30 / sub_82F39940 the gold / XP multipliers of the pickup code sub_82F45FC8 (their blr, f1 times the setting). Developer kit run in level_501 with all four on: element check 0 -> 1, crit chance 2 -> 100, gold multiplier 1.03 -> 5.15, XP multiplier 1.01 -> 5.03.
