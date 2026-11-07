@@ -80,7 +80,7 @@ The setup isn't signed, so Windows may say "Windows protected your PC": click **
   (no health loss, full gold, always crit, elemental power everywhere, gold and XP multipliers; off
   by default, and *Show cheats* hides the lot).
 - **Achievements.**
-- **A Discord status,** if you switch it on: the game, your Skylander and the level.
+- **A Discord status:** the game, your Skylander and the level, while the Discord app runs. F4 > Game turns it off.
 - **HD texture packs** work too ([how](https://github.com/tsapZ/SwapForceRecomp/blob/main/docs/texture-packs.md)).
 - **Languages:** the disc has Spanish and Italian; English, German or French come from your PS3
   disc ([below](#english-german-or-french-from-your-ps3-disc)).
