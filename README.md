@@ -113,9 +113,9 @@ The settings menu shows the keyboard keys for the game itself under Controls.
 
 ## How far it is
 
-The opening cutscene and the first level play. Nobody has played the whole game to the end yet. If
-something breaks further in, please [tell me](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose).
-
+The opening cutscene and the first level play, and in automated test runs all 13 story levels load
+without a crash. Nobody has played the whole game to the end yet. If something breaks further in,
+please [tell me](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose).
 What's being worked on: [docs/roadmap.md](docs/roadmap.md). Known bugs and the details:
 [docs/STATUS.md](docs/STATUS.md).
 
