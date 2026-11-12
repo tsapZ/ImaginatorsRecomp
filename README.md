@@ -117,6 +117,17 @@ The settings menu shows the keyboard keys for the game itself under Controls.
 The opening cutscene and the first level play, and in automated test runs all 13 story levels load
 without a crash. Nobody has played the whole game to the end yet. If something breaks further in,
 please [tell me](https://github.com/tsapZ/ImaginatorsRecomp/issues/new/choose).
+
+**What's tested** (as of 2026-11-12):
+
+| | |
+|---|---|
+| Every story level loads | all 13, by script |
+| Played by hand | the first level |
+| Real USB portal | not tried with this game yet |
+| Two players | not tried yet |
+| Graphics | D3D12 and Vulkan, by script |
+
 What's being worked on, for all six games and the launcher: the [roadmap
 board](https://github.com/users/tsapZ/projects/1), and [docs/roadmap.md](docs/roadmap.md) for this
 game. Questions and ideas: [Discussions](https://github.com/tsapZ/SkylandersCoreOfLight/discussions). Known bugs and the details:
