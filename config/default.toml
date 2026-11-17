@@ -180,6 +180,17 @@ address = 0x82A4BE58
 name = "FigureIntroEndHook"
 registers = ["r3", "r27"]
 
+# 0x82A4EE60 is in the scene update sub_82A4EA68, where the inlined "auto skip cutscenes" test (Vicarious Visions'
+# developer switch, byte +74 of the object behind 0x837F3E74, or a timer test) has left its answer in r11 (0 or 1):
+# with 1 a scene in state 3 is ended right after. Found 2026-11-17 from the scripts' native AutoSkipCutscenes
+# (sub_829AEFF8): the update is the only other reader of that byte; setting the byte in a scene ended it
+# (im_autoskip_test.ps1). src/hooks/skip_talks_hook.cpp sets r11 to 1 for a moment after B or Y with skip_talks on
+# (off by default); it changes only the answer the next instruction (clrlwi r11,r11,24) reads.
+[[midasm_hook]]
+address = 0x82A4EE60
+name = "SkipTalksAutoSkipHook"
+registers = ["r11"]
+
 # 0x82EEB308 is CPlayerJumpComponent's per-frame "stuck while falling" check, as SuperChargers'
 # sub_82F949B8 and Swap Force's sub_82A4A828: a falling player who moved less than a distance since
 # the last frame runs the stuck timer (+0xA0), and after CPlayerSystemData._stuckFallingTime
