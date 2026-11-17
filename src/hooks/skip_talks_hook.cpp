@@ -17,6 +17,7 @@
 #include <mutex>
 
 #include <rex/cvar.h>
+#include <rex/hook.h>
 #include <rex/logging.h>
 #include <rex/ppc/context.h>
 
@@ -48,4 +49,25 @@ void SkipTalksAutoSkipHook(PPCRegister& r11) {
     REXLOG_INFO("Skip talks: {} skips the scene", (presses & 0x2000) ? "B" : "Y");
   }
   if (now < g_skip_until) r11.u64 = 1;
+}
+
+// Talks (text box lines): Vicarious Visions' pause menu option "Dialoge überspringen" (CGuiBehaviorPauseMenuOptionDialogueSkip;
+// SuperChargers shows it with "Nur Wiederholungen" / "Immer", and with "Immer" a talk shows "press Y to skip" at the
+// first press, sc_dialog_test.ps1 2026-11-17) isn't in Imaginators' options list, but its getter is: the scripts'
+// native getAlwaysSkipDialogue (sub_82C2EB10, the Game state group of the natives table at 0x83789DA0, one word off as
+// the Game group) returns sub_829BAD98: offline the word +24 of the settings object behind 0x837E0D7C, online the
+// host's choice. sub_829BAD98 has no other caller. With skip_talks on it says "always" (1). Nothing is written.
+REX_EXTERN(__imp__sub_829BAD98);  // the "always skip dialogue" setting (original)
+
+REX_HOOK_RAW(sub_829BAD98) {
+  if (REXCVAR_GET(skip_talks)) {
+    static bool logged = false;
+    if (!logged) {
+      logged = true;
+      REXLOG_INFO("Skip talks: talks can always be skipped (the game's 'skip dialogue: always')");
+    }
+    ctx.r3.u64 = 1;
+    return;
+  }
+  __imp__sub_829BAD98(ctx, base);
 }
