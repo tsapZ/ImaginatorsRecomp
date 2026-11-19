@@ -66,6 +66,7 @@ set(IMAGINATORSRECOMP_SOURCES
     src/hooks/figure_intro_hook.cpp
     src/hooks/frame_rate_hook.cpp
     src/hooks/fxaa_scale_hook.cpp
+    src/hooks/game_heap_hook.cpp
     src/hooks/intro_skip_hook.cpp
     src/hooks/god_mode_hook.cpp
     src/hooks/attribute_cheats_hook.cpp

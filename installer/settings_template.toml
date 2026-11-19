@@ -41,3 +41,6 @@ skip_intro = false                         # true: skip the Activision and Toys 
 
 ["Runtime"]
 # user_data_root: on the command line only (--user_data_root=...); default Documents\Skylanders\Imaginators
+
+["Mods"]
+# game_heap_extra = 0x400000             # more room in the game's main heap, for mods that raise MP_GAME_MODE_RESIZABLE in MemoryPoolConfigs.igx: 1 MB more than they add (0 = the game's own)
