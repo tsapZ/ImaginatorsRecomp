@@ -354,17 +354,27 @@ SettingsPage GamePage() {
   // "auto" follows the Windows display language if it is one of them, else English.
   Setting language{"language", "Language", "Sprache",
                    "Text and voices.\n"
-                   "Automatic: the language of Windows, if the game has it.",
+                   "Automatic: the language of Windows, if the game has it.\n"
+                   "\n"
+                   "Each disc has two or four of these; one the disc doesn't have gives the "
+                   "disc's first language.",
                    "Texte und Stimmen.\n"
-                   "Automatisch: die Sprache von Windows, wenn das Spiel sie hat.",
+                   "Automatisch: die Sprache von Windows, wenn das Spiel sie hat.\n"
+                   "\n"
+                   "Jede Disc hat zwei oder vier davon; eine, die die Disc nicht hat, ergibt die "
+                   "erste Sprache der Disc.",
                    {{"auto", "Automatic", "Automatisch"},
                     {"english", "English", "English"},
                     {"german", "Deutsch", "Deutsch"},
                     {"french", "Fran\xC3\xA7" "ais", "Fran\xC3\xA7" "ais"},
                     {"spanish", "Espa\xC3\xB1ol", "Espa\xC3\xB1ol"},
                     {"italian", "Italiano", "Italiano"},
-                    // Dutch through the country, not a language id (localization.cpp, CoL #68).
-                    {"dutch", "Nederlands", "Nederlands"}}};
+                    {"dutch", "Nederlands", "Nederlands"},
+                    // the Scandinavian disc (localization.cpp, Core of Light #118)
+                    {"swedish", "Svenska", "Svenska"},
+                    {"norwegian", "Norsk", "Norsk"},
+                    {"danish", "Dansk", "Dansk"},
+                    {"finnish", "Suomi", "Suomi"}}};
   language.restart = true;
   page.settings.push_back(language);
   Setting intro{"skip_intro", "Skip logo movies", "Logo-Videos \xC3\xBC" "berspringen",
