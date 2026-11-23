@@ -24,7 +24,7 @@ nothing of it comes with this project.
 
 **Can I use my real portal and figures?** Yes. Plug it in: the game finds it by itself (F4 > Portal is *Automatic*), reads your figures and saves their progress on them, as on the console, and the portal menu still has the figures you don't own. Every figure you put on gets a backup file. *Real USB portal only* leaves the menu out. The PS3, Wii and PC portals work as they are, also with the WinUSB driver a Dolphin or Cemu setup gives them; an Xbox 360 portal needs WinUSB (Zadig), as for Xenia. If yours doesn't work, F4 > Game > *Report a problem*: its log says what the game saw.
 
-**Can I play without figures?** Yes: without a real portal, a menu with every figure opens when the game asks for a Skylander. Their progress is kept in files in `Documents\Skylanders\Figures`, and one button swaps back to the Skylander you played before.
+**Can I play without figures?** Yes: without a real portal, a menu with every figure of the earlier games opens when the game asks for a Skylander. Imaginators' own toys (Senseis, creation crystals, chests) carry a signature only a real toy has, so the menu lists those you have a file of: from your own toy on a real portal, or its dump. Their progress is kept in files in `Documents\Skylanders\Figures`, and one button swaps back to the Skylander you played before.
 
 **Can I play with a friend?** Yes, two players on one PC, as on the console: the second player opens the portal menu on their controller (Guide, or Back + Start) and puts their Skylander on. L3 + R3 sorts out which controller plays which player. Online play isn't there yet.
 
@@ -73,8 +73,9 @@ The setup isn't signed, so Windows may say "Windows protected your PC": click **
   Bloom and motion blur can be turned down.
 - **60 FPS**, or 30 as on the console, or 144 and more. The game keeps its normal speed.
 - **Ultrawide:** a wider window shows more to the sides, and the HUD moves out to the edges.
-- **No portal needed:** when the game asks for a Skylander, a menu with every figure opens by itself,
-  in the game's own look, creation crystals sorted by class. A real USB portal should work too
+- **No portal needed:** when the game asks for a Skylander, a menu with every figure of the earlier
+  games opens by itself, in the game's own look; Imaginators' own toys come from files of your own
+  (creation crystals sorted by class). A real USB portal should work too
   (not tried with this game yet).
 - **A shorter Skylander intro** when a figure comes in, if you like (in the settings).
 - **Your figures keep their progress** (level, gold, hats, upgrades) in files you can back up, and
