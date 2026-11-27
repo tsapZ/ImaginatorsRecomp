@@ -34,6 +34,8 @@
 // Defined in the SDK (xam_user.cpp): the game's language, which localization.cpp sets from [Game]
 // language.
 REXCVAR_DECLARE(uint32_t, user_language);
+// The console's country (also the SDK's): Danish and Finnish run as English with DK 25 / FI 32.
+REXCVAR_DECLARE(uint32_t, user_country);
 
 namespace imaginatorsrecomp {
 namespace {
@@ -50,8 +52,9 @@ std::string Lower(std::string s) {
 
 // The names for the English status: the _en files. A disc without them (CoL #105: the French /
 // Dutch Imaginators disc has only fr and nl texts) gives its own text instead: the language the
-// game runs in first (user_language 4 French, 5 Spanish, 6 Italian), then Dutch, French, Italian,
-// Spanish, whichever the disc has. Picked at each lookup, as the language is set at start-up,
+// game runs in first (user_language 4 French, 5 Spanish, 6 Italian, 13 Swedish, 15 Norwegian, 16
+// Dutch; Danish and Finnish run as English with the country DK 25 / FI 32, localization.cpp), then
+// Dutch, French, Italian, Spanish, Swedish, Norwegian, Danish, Finnish, whichever the disc has. Picked at each lookup, as the language is set at start-up,
 // maybe after these files were read.
 const Table& EnglishOrDiscText(const std::unordered_map<std::string, Table>& by_language) {
   static const Table kNone;
@@ -65,12 +68,19 @@ const Table& EnglishOrDiscText(const std::unordered_map<std::string, Table>& by_
     case 4: own = "fr"; break;
     case 5: own = "es"; break;
     case 6: own = "it"; break;
+    case 13: own = "sv"; break;
+    case 15: own = "no"; break;
+    case 16: own = "nl"; break;
+    case 1:  // only reached without _en files
+      if (REXCVAR_GET(user_country) == 25) own = "da";
+      if (REXCVAR_GET(user_country) == 32) own = "fi";
+      break;
     default: break;
   }
   if (own != nullptr) {
     if (const Table* table = has(own)) return *table;
   }
-  for (const char* code : {"nl", "fr", "it", "es"}) {
+  for (const char* code : {"nl", "fr", "it", "es", "sv", "no", "da", "fi"}) {
     if (const Table* table = has(code)) return *table;
   }
   return kNone;
