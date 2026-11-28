@@ -580,6 +580,11 @@ SettingsPage ExtrasPage() {
        "Gebiet ihres."}));
   page.settings.push_back(skylanders::GoldMultiplierCheatSetting());
   page.settings.push_back(skylanders::XpMultiplierCheatSetting());
+  // src/hooks/gong_cheat_hook.cpp: the battle gong's "is it a Sensei" answer (#20).
+  page.settings.push_back(skylanders::CheatSetting(
+      {"cheat_gong_for_everyone", "Gong for everyone", "Gong f\xC3\xBCr alle",
+       "Every Skylander can ring the battle gong in the story levels, not only Senseis.",
+       "Jeder Skylander kann den Kampfgong in den Story-Levels schlagen, nicht nur Sensei."}));
   return page;
 }
 

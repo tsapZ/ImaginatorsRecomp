@@ -79,7 +79,9 @@ the figures on the emulated portal, A marks one to take off, Continue takes them
   picture.
 - **Extras:** Nightmare from the start (`nightmare_from_start`, off; the save isn't changed);
   no health loss (`cheat_no_health_loss`, off; a cheat: achievements don't
-  unlock while it's on; the game's own god mode, only the players' Skylanders are spared).
+  unlock while it's on; the game's own god mode, only the players' Skylanders are spared);
+  gong for everyone (`cheat_gong_for_everyone`, off; a cheat: any Skylander can ring the battle
+  gong, not only Senseis, #20).
 - **Keyboard, Controller:** the keyboard's key for each controller button; what each controller
   button does in the game (`pad_map_a` ... `pad_map_rs`, e.g. a shoulder button doing B's job) and
   how strongly each player's controller vibrates (`pad_rumble_p1` / `_p2`, 10 % steps, the
