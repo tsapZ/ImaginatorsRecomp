@@ -237,13 +237,13 @@ address = 0x82A117C0
 name = "GodModeKeptOffHook"
 registers = []
 
-# Gong for everyone (src/hooks/gong_cheat_hook.cpp, Imaginators #20): sub_82DFA750 is the battle gong's
-# script native "is the Skylander here a Sensei"; it calls sub_82D1D220 (toy id 600-650 at +20 of the
-# toy data) and stores the answer byte and its negation for the script. 0x82DFA790 is the clrlwi right
-# after that call, r3 the answer; the hook makes it yes while cheat_gong_for_everyone is on (off by
-# default). sub_82D1D220's nine other callers (the figure arrival asks ten times) keep the real
-# answer. Found 2026-11-18 with a TEMP DIAG on its callers: this one is asked about 3 times a second
-# near a gong, and yes there lit the gong for Chop Chop as for a real Sensei.
+# Gong for everyone (src/hooks/gong_cheat_hook.cpp, Imaginators #20): sub_82DFA750 is the native of
+# the script binding isSensei; 0x82DFA790 is the clrlwi right after its call to sub_82D1D220 (toy id
+# 600-650), r3 the answer. The hook makes it yes while cheat_gong_for_everyone is on (off by
+# default), for every script that asks isSensei (in test runs: the gong, and ten scripts at a
+# figure's arrival; no Sky-Chi meter came up, the figure file stayed the same as without the
+# cheat). The native code's other callers of sub_82D1D220 keep the real answer. How it was found
+# and tested: the .cpp's header.
 [[midasm_hook]]
 address = 0x82DFA790
 name = "GongSenseiHook"

@@ -801,6 +801,14 @@ above and docs/roadmap.md.
 
 - The fast graphics card on laptops with two; Traptanium speaker on Windows' HID driver splits its packets by itself.
 
+## 2026-11-28: gong for everyone
+
+- Extras > Gong for everyone (`cheat_gong_for_everyone`, off, #20): the script binding isSensei answers yes
+  (src/hooks/gong_cheat_hook.cpp, a midasm hook in its native sub_82DFA750). Developer kit runs in level_501
+  with Chop Chop: the gong lights up as for a real Sensei (Ambush, the same route); ten scripts also ask at a
+  figure's arrival, no Sky-Chi meter appears, and the figure file is byte for byte the one of a run with the
+  cheat off. A whole gong battle with a non-Sensei is not played yet.
+
 ## 2026-11-28: shared libraries
 
 - The portal menu next to a real swapper half; the trap light's log; Vulkan's card pick by kind.
